@@ -1,0 +1,181 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Fuente clara y colores suaves */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(180deg, #f9fafb, #e4ebf5);
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.encabezado {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.logo-calendario {
+  width: 85px;
+  height: auto;
+}
+
+.nombre-aplicacion {
+  font-size: 2rem;
+  margin-top: 0.5rem;
+  color: #1a202c;
+}
+
+.contenido-principal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.presentacion h2 {
+  font-size: 1.7rem;
+  margin-bottom: 0.6rem;
+  color: #2d3748;
+}
+
+.presentacion p {
+  max-width: 520px;
+  margin: 0 auto 2rem;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+/* Contenedor con los botones de acceso del usuario */
+.acciones-usuario {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Estilo base para todos los botones */
+.boton {
+  text-decoration: none;
+  padding: 0.9rem 1.7rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+/* Botón principal: iniciar sesión */
+.boton-principal {
+  background-color: #2b6cb0;
+  color: white;
+}
+
+.boton-principal:hover {
+  background-color: #2c5282;
+}
+
+/* Botón secundario: registrarse */
+.boton-secundario {
+  background-color: #edf2f7;
+  color: #2b6cb0;
+  border: 1px solid #cbd5e0;
+}
+
+.boton-secundario:hover {
+  background-color: #e2e8f0;
+}
+
+/* Pie de página discreto y limpio */
+.pie-pagina {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+  padding: 1rem 0;
+  background: #f7fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Estilos para formularios de acceso (inicio sesión y registro) */
+.formulario-acceso {
+  background: white;
+  padding: 2rem 2.5rem;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  max-width: 400px;
+  width: 100%;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formulario-acceso h2 {
+  text-align: center;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+}
+
+.formulario-acceso .texto-intro {
+  text-align: center;
+  color: #4a5568;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formulario label {
+  font-weight: 500;
+  color: #2d3748;
+}
+
+.formulario input[type="text"],
+.formulario input[type="email"],
+.formulario input[type="password"],
+.formulario input[type="file"] {
+  padding: 0.7rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e0;
+  font-size: 1rem;
+  width: 100%;
+  transition: border 0.2s;
+}
+
+.formulario input:focus {
+  border-color: #2b6cb0;
+  outline: none;
+}
+
+.formulario button.boton-principal {
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.enlace-alternativo {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #4a5568;
+}
+
+.enlace-alternativo a {
+  color: #2b6cb0;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.enlace-alternativo a:hover {
+  text-decoration: underline;
+}
+
