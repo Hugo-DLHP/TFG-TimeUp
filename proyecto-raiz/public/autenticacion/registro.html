@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registrarse | Calendario Web</title>
-    <!-- Favicon de la página -->
+  <title>Registrarse | TimeUp</title>
+  <!-- Favicon de la página -->
   <link rel="icon" href="../recursos/iconos/favicoTimeUp.ico" type="image/x-icon">
-  <link rel="stylesheet" href="../css/styles1.css"> <!-- Archivo principal de estilos -->
+  <link rel="stylesheet" href="../css/styles1.css">
 </head>
 <body>
   <!-- Encabezado con el logo -->
   <header class="encabezado">
-    <img src="../recursos/logoTimeUp.png" alt="Logo de Calendario Web" class="logo-calendario">
+    <img src="../recursos/logoTimeUp.png" alt="Logo de TimeUp" class="logo-calendario">
   </header>
 
   <!-- Contenido principal -->
@@ -21,10 +21,11 @@
       <p class="texto-intro">Completa los siguientes datos para registrarte.</p>
 
       <!-- Formulario de registro -->
-      <form id="formularioRegistro" class="formulario">
+      <form id="formularioRegistro" class="formulario" enctype="multipart/form-data">
+
         <!-- Campo para el nombre de usuario -->
         <label for="usuario">Nombre de usuario</label>
-        <input type="text" id="usuario" name="usuario" placeholder="Tu nombre de usuario" required>
+        <input type="text" id="usuario" name="nombre" placeholder="Tu nombre de usuario" required>
 
         <!-- Campo para el correo -->
         <label for="correoRegistro">Correo electrónico</label>
@@ -51,10 +52,40 @@
 
   <!-- Pie de página -->
   <footer class="pie-pagina">
-    <p>© 2025 Calendario Web</p>
+    <p>© 2025 TimeUp</p>
   </footer>
-
+  
   <!-- Script con validaciones del formulario -->
-  <script src="../js/validación.js"></script>
+  <!--<script src="../js/validación.js"></script>-->
+
+  <!-- ENVÍO DEL FORMULARIO AL BACK -->
+  <script>
+    document.getElementById("formularioRegistro").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch("http://localhost/TFG/proyecto-raiz/api/index.php?controlador=Usuario&accion=registrar", {
+
+          method: "POST",
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert("Usuario registrado correctamente ✅");
+          window.location.href = "./iniciar-sesion.html";
+        } else {
+          alert("Error: " + (data.error || "No se pudo registrar"));
+        }
+      } catch (err) {
+        alert("Error de conexión con el servidor ❌");
+        console.error(err);
+      }
+    });
+  </script>
 </body>
 </html>
