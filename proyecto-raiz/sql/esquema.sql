@@ -133,7 +133,3 @@ CREATE TABLE notificaciones (
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
-
--- =====================================================
---  FIN DE LA ESTRUCTURA
--- =====================================================
