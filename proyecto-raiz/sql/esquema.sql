@@ -1,12 +1,12 @@
 -- =====================================================
---  BASE DE DATOS: CalendarioColaborativo
+--  BASE DE DATOS: TimeUp
 -- =====================================================
 
-CREATE DATABASE IF NOT EXISTS CalendarioColaborativo
+CREATE DATABASE IF NOT EXISTS TimeUp
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_general_ci;
 
-USE CalendarioColaborativo;
+USE TimeUp;
 
 -- =====================================================
 --  TABLA: Usuarios
@@ -52,14 +52,14 @@ CREATE TABLE usuarios_grupos (
 );
 
 -- =====================================================
---  TABLA: Diseños (para personalización)
+--  TABLA: Disenos (para personalización)
 -- =====================================================
-CREATE TABLE diseños (
-    id_diseño INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE disenos (
+    id_diseno INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
     color_base VARCHAR(20) DEFAULT '#FFFFFF',
     fuente VARCHAR(50) DEFAULT 'Arial',
-    tamaño_fuente VARCHAR(10) DEFAULT '14px',
+    tamano_fuente VARCHAR(10) DEFAULT '14px',
     estilo ENUM('claro', 'oscuro', 'personalizado') DEFAULT 'claro',
     icono VARCHAR(100)
 );
@@ -71,12 +71,12 @@ CREATE TABLE calendarios (
     id_calendario INT AUTO_INCREMENT PRIMARY KEY,
     id_grupo INT NOT NULL,
     nombre VARCHAR(100) NOT NULL,
-    id_diseño INT,
+    id_diseno INT,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_grupo) REFERENCES grupos(id_grupo)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
-    FOREIGN KEY (id_diseño) REFERENCES diseños(id_diseño)
+    FOREIGN KEY (id_diseno) REFERENCES disenos(id_diseno)
         ON DELETE SET NULL
         ON UPDATE CASCADE
 );
