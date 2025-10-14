@@ -5,50 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar sesión | TimeUp</title>
 
-    <!-- Favicon de la página -->
+  <!-- Favicon -->
   <link rel="icon" href="../recursos/iconos/favicoTimeUp.ico" type="image/x-icon">
-  
-  <link rel="stylesheet" href="../css/styles1.css"> <!-- Enlace al archivo de estilos -->
+  <link rel="stylesheet" href="../css/styles1.css">
 </head>
 <body>
-  <!-- Encabezado con el logo -->
+  <!-- Encabezado con logo y botón de tema -->
   <header class="encabezado">
-    <img src="../recursos/logoTimeUp.png" alt="Logo de TimeUp" class="logo-calendario">
+    <img src="../recursos/logoTimeUp.png" alt="Logo de TimeUp" class="logo-calendario" id="logo-timeup">
+    <button id="boton-tema" class="boton-tema" aria-label="Cambiar tema">🌙 Modo oscuro</button>
   </header>
 
-  <!-- Contenido principal de la página -->
   <main class="contenido-principal">
     <section class="formulario-acceso">
       <h2>Iniciar sesión</h2>
       <p class="texto-intro">Accede a tu cuenta para ver y gestionar tus eventos.</p>
 
-      <!-- Formulario de inicio de sesión -->
       <form id="formularioInicio" class="formulario">
-        <!-- Campo para el correo -->
         <label for="correo">Correo electrónico</label>
         <input type="email" id="correo" name="correo" placeholder="tu@correo.com" required>
 
-        <!-- Campo para la contraseña -->
         <label for="contrasena">Contraseña</label>
         <input type="password" id="contrasena" name="contrasena" placeholder="••••••••" required>
 
-        <!-- Botón para enviar el formulario -->
         <button type="submit" class="boton boton-principal">Entrar</button>
       </form>
 
-      <!-- Enlace para usuarios sin cuenta -->
       <p class="enlace-alternativo">
         ¿No tienes cuenta? <a href="./registro.html">Regístrate aquí</a>
       </p>
     </section>
   </main>
 
-  <!-- Pie de página con derechos -->
   <footer class="pie-pagina">
     <p>© 2025 TimeUp</p>
   </footer>
 
-  <!-- Script de validación del formulario -->
+  <!-- Script modo oscuro con cambio de logo -->
+  <script src="../js/tema.js"></script>
+
+  <!-- Script de validación -->
   <script src="../js/validación.js"></script>
+
+  <script>
+    document.getElementById('formularioInicio').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const correo = document.getElementById('correo').value.trim();
+      const contrasena = document.getElementById('contrasena').value.trim();
+
+      try {
+        const response = await fetch('http://localhost/TFG/proyecto-raiz/api/index.php?controlador=Usuario&accion=iniciarSesion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ correo, contrasena })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.exito) {
+          // Guardar usuario logueado
+          localStorage.setItem('usuario', JSON.stringify(data.usuario));
+          
+          alert('Inicio de sesión correcto ✅');
+          // Redirigir a la página del usuario
+          window.location.href = '../usuario/usuario.html';
+        } else {
+          alert(data.error || 'Correo o contraseña incorrectos ❌');
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+        alert('Error de conexión con el servidor.');
+      }
+    });
+  </script>
 </body>
 </html>

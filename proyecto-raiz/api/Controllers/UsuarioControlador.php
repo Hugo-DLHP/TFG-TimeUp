@@ -62,4 +62,47 @@ class UsuarioControlador extends ControladorBase
             $this->jsonResponse(['error' => 'Error al registrar: ' . $e->getMessage()], 500);
         }
     }
+
+    public function iniciarSesion()
+    {
+        // Leer datos del body JSON
+        $data = json_decode(file_get_contents("php://input"), true);
+        $correo = $data['correo'] ?? '';
+        $contrasena = $data['contrasena'] ?? '';
+
+        // Validación simple
+        if (empty($correo) || empty($contrasena)) {
+            echo json_encode(['error' => 'Debe completar todos los campos.']);
+            return;
+        }
+
+        require_once __DIR__ . '/../Models/Usuario.php';
+        $usuario = Usuario::findByCorreo($correo);
+
+        if (!$usuario) {
+            echo json_encode(['error' => 'Usuario no encontrado.']);
+            return;
+        }
+
+        // Verificar contraseña
+        if (!password_verify($contrasena, $usuario['contrasena'])) {
+            echo json_encode(['error' => 'Contraseña incorrecta.']);
+            return;
+        }
+
+        // Si todo es correcto
+        echo json_encode([
+            'exito' => true,
+            'mensaje' => 'Inicio de sesión correcto',
+            'usuario' => [
+                'id_usuario' => $usuario['id_usuario'],
+                'nombre' => $usuario['nombre'],
+                'correo' => $usuario['correo'],
+                'rol' => $usuario['rol'],
+                'foto' => $usuario['foto'] ?? 'recursos/perfiles/default.png'
+
+            ]
+        ]);
+    }
+
 }

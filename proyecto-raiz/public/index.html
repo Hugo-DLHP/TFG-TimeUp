@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <!-- Configuración básica del documento -->
   <meta charset="UTF-8"> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-
-  <!-- Título que aparece en la pestaña del navegador -->
   <title>TimeUp | Inicio</title>
 
-    <!-- Favicon de la página -->
+  <!-- Favicon de la página -->
   <link rel="icon" href="./recursos/iconos/favicoTimeUp.ico" type="image/x-icon">
-  
   <link rel="stylesheet" href="./css/styles1.css">
 </head>
 
@@ -18,28 +14,39 @@
   <!-- ENCABEZADO DE LA PÁGINA -->
   <header class="encabezado">
     <!-- Imagen del logotipo del sitio -->
-    <img src="./recursos/logoTimeUp.png" alt="Logo de TimeUp" class="logo-calendario">
+    <img src="./recursos/logoTimeUp.png" alt="Logo de TimeUp" class="logo-calendario" id="logo-timeup">
     
     <!-- Nombre o título de la aplicación -->
     <h1 class="nombre-aplicacion">TimeUp</h1>
+
+    <!-- MENÚ DE NAVEGACIÓN SUPERIOR -->
+    <nav class="barra-navegacion">
+      <ul class="menu-principal">
+        <li><a href="index.html"><span class="icono">🏠</span> Inicio</a></li>
+        <li><a href="./calendario/calendario.html"><span class="icono">📅</span> Calendario</a></li>
+        <li><a href="./calendario/eventos.html"><span class="icono">🗓️</span> Eventos</a></li>
+        <li><a href="./usuario/usuario.html"><span class="icono">👤</span> Perfil</a></li>
+        <li><a href=""><span class="icono">❓</span> Ayuda</a></li>
+        
+        <!-- BOTÓN PARA CAMBIAR DE TEMA -->
+        <button id="boton-tema" class="boton-tema" aria-label="Cambiar tema">
+          🌙 Modo oscuro
+        </button>
+      </ul>
+    </nav>
   </header>
 
   <!-- CONTENIDO PRINCIPAL DEL SITIO -->
   <main class="contenido-principal">
-    
-    <!-- Sección de presentación o introducción -->
     <section class="presentacion">
-      <h2>Organiza tu tiempo fácilmente</h2> <!-- Subtítulo que invita al usuario -->
+      <h2>Organiza tu tiempo fácilmente</h2>
       <p>
-        <!-- Descripción del propósito de la aplicación -->
         TimeUp es una aplicación pensada para ayudarte a planificar tus días,
         gestionar tus eventos y mantener todo bajo control desde cualquier dispositivo.
       </p>
     </section>
 
-    <!-- Zona de acciones del usuario (inicio de sesión o registro) -->
     <div class="acciones-usuario">
-      <!-- Botones principales para acceder a otras páginas -->
       <a href="./autenticacion/inicio-sesion.html" class="boton boton-principal">Iniciar sesión</a>
       <a href="./autenticacion/registro.html" class="boton boton-secundario">Registrarse</a>
     </div>
@@ -47,8 +54,13 @@
 
   <!-- PIE DE PÁGINA -->
   <footer class="pie-pagina">
-    <!-- Texto con derechos de autor o información legal -->
     <p>© 2025 TimeUp. Todos los derechos reservados.</p>
   </footer>
+
+  <!-- Script del modo claro/oscuro -->
+  <script src="./js/tema.js"></script>
+
 </body>
 </html>
+
+

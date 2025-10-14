@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil - TimeUp</title>
-    <link rel="stylesheet" href="../css/style1.css">
     <link rel="stylesheet" href="../css/usuario.css">
+    <link rel="stylesheet" href="../css/styles1.css">
     <link rel="icon" href="../recursos/iconos/favicoTimeUp.ico" type="image/x-icon">
 </head>
 <body>
@@ -21,18 +21,18 @@
                 <form id="profile-form">
                     <div class="form-group">
                         <label for="nombre">Nombre:</label>
-                        <input type="text" id="nombre" name="nombre" required>
+                        <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required>
                     </div>
                     
                     <div class="form-group">
                         <label for="correo">Correo electrónico:</label>
-                        <input type="email" id="correo" name="correo" required>
+                        <input type="email" id="correo" name="correo" placeholder="tu@correo.com" required>
                     </div>
                     
                     <div class="form-group">
                         <label for="foto-perfil">Foto de perfil:</label>
                         <div class="photo-upload">
-                            <img id="preview-foto" src="../recursos/default-avatar.png" alt="Foto de perfil">
+                            <img id="fotoPerfil" src="" alt="Foto de perfil">
                             <input type="file" id="foto-perfil" accept="image/*" style="display: none;">
                             <button type="button" id="btn-cambiar-foto" class="btn-secondary">
                                 Cambiar foto
@@ -79,5 +79,22 @@
     </div>
     
     <script src="../js/usuario.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+            if (!usuario) {
+                alert('Debe iniciar sesión primero.');
+                window.location.href = '../autenticacion/inicio-sesion.html';
+                return;
+            }
+
+            // Mostrar foto, nombre y correo
+            document.getElementById('fotoPerfil').src = `../${usuario.foto}`;
+            document.getElementById('nombre').value = usuario.nombre;
+            document.getElementById('correo').value = usuario.correo;
+
+        });
+    </script>
 </body>
 </html>

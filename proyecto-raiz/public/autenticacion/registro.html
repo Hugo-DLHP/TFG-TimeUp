@@ -4,59 +4,52 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registrarse | TimeUp</title>
-  <!-- Favicon de la página -->
+
   <link rel="icon" href="../recursos/iconos/favicoTimeUp.ico" type="image/x-icon">
   <link rel="stylesheet" href="../css/styles1.css">
 </head>
 <body>
-  <!-- Encabezado con el logo -->
   <header class="encabezado">
-    <img src="../recursos/logoTimeUp.png" alt="Logo de TimeUp" class="logo-calendario">
+    <img src="../recursos/logoTimeUp.png" alt="Logo de TimeUp" class="logo-calendario" id="logo-timeup">
+    <button id="boton-tema" class="boton-tema">🌙 Modo oscuro</button>
   </header>
 
-  <!-- Contenido principal -->
   <main class="contenido-principal">
     <section class="formulario-acceso">
       <h2>Crear cuenta</h2>
       <p class="texto-intro">Completa los siguientes datos para registrarte.</p>
 
-      <!-- Formulario de registro -->
       <form id="formularioRegistro" class="formulario" enctype="multipart/form-data">
-
-        <!-- Campo para el nombre de usuario -->
         <label for="usuario">Nombre de usuario</label>
         <input type="text" id="usuario" name="nombre" placeholder="Tu nombre de usuario" required>
 
-        <!-- Campo para el correo -->
         <label for="correoRegistro">Correo electrónico</label>
         <input type="email" id="correoRegistro" name="correo" placeholder="tu@correo.com" required>
 
-        <!-- Campo para la contraseña -->
         <label for="contrasenaRegistro">Contraseña</label>
         <input type="password" id="contrasenaRegistro" name="contrasena" placeholder="Mínimo 8 caracteres" required>
 
-        <!-- Opción para subir una foto -->
         <label for="fotoPerfil">Foto de perfil (opcional)</label>
         <input type="file" id="fotoPerfil" name="fotoPerfil" accept="image/*">
 
-        <!-- Botón para enviar el formulario -->
         <button type="submit" class="boton boton-principal">Registrarse</button>
       </form>
 
-      <!-- Enlace para quienes ya tienen cuenta -->
       <p class="enlace-alternativo">
         ¿Ya tienes cuenta? <a href="./inicio-sesion.html">Inicia sesión</a>
       </p>
     </section>
   </main>
 
-  <!-- Pie de página -->
   <footer class="pie-pagina">
     <p>© 2025 TimeUp</p>
   </footer>
-  
+
   <!-- Script con validaciones del formulario -->
   <!--<script src="../js/validación.js"></script>-->
+
+  <!-- Script modo oscuro con cambio de logo -->
+  <script src="../js/tema.js"></script>
 
   <!-- ENVÍO DEL FORMULARIO AL BACK -->
   <script>
@@ -68,7 +61,6 @@
 
       try {
         const response = await fetch("http://localhost/TFG/proyecto-raiz/api/index.php?controlador=Usuario&accion=registrar", {
-
           method: "POST",
           body: formData
         });
@@ -77,7 +69,7 @@
 
         if (response.ok) {
           alert("Usuario registrado correctamente ✅");
-          window.location.href = "./iniciar-sesion.html";
+          window.location.href = "./inicio-sesion.html";
         } else {
           alert("Error: " + (data.error || "No se pudo registrar"));
         }
