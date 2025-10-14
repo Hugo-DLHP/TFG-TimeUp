@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - TimeUp</title>
+    <link rel="stylesheet" href="../css/style1.css">
+    <link rel="stylesheet" href="../css/usuario.css">
+    <link rel="icon" href="../recursos/iconos/favicoTimeUp.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <header class="profile-header">
+            <h1>Mi Perfil</h1>
+        </header>
+        
+        <div class="profile-content">
+            <!-- Información Personal -->
+            <section class="profile-section">
+                <h2>Información Personal</h2>
+                <form id="profile-form">
+                    <div class="form-group">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="correo">Correo electrónico:</label>
+                        <input type="email" id="correo" name="correo" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="foto-perfil">Foto de perfil:</label>
+                        <div class="photo-upload">
+                            <img id="preview-foto" src="../recursos/default-avatar.png" alt="Foto de perfil">
+                            <input type="file" id="foto-perfil" accept="image/*" style="display: none;">
+                            <button type="button" id="btn-cambiar-foto" class="btn-secondary">
+                                Cambiar foto
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">Guardar cambios</button>
+                </form>
+            </section>
+            
+            <!-- Preferencias -->
+            <section class="profile-section">
+                <h2>Preferencias</h2>
+                <form id="preferences-form">
+                    <div class="form-group">
+                        <label for="tema">Tema de la aplicación:</label>
+                        <select id="tema" name="tema">
+                            <option value="claro">Modo Claro</option>
+                            <option value="oscuro">Modo Oscuro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="vista-calendario">Vista de calendario:</label>
+                        <select id="vista-calendario" name="vista-calendario">
+                            <option value="mensual">Mensual</option>
+                            <option value="semanal">Semanal</option>
+                            <option value="diario">Diario</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="notificaciones-email" name="notificaciones-email">
+                            Recibir notificaciones por email
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">Guardar preferencias</button>
+                </form>
+            </section>
+        </div>
+    </div>
+    
+    <script src="../js/usuario.js"></script>
+</body>
+</html>
