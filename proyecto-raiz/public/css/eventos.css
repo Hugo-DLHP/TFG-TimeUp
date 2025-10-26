@@ -1,0 +1,114 @@
+/* ===== ESTILOS DE LA PÁGINA DE EVENTOS ===== */
+.contenido-principal {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.panel-eventos {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 90%;
+  max-width: 700px;
+  padding: 1.5rem;
+}
+
+.panel-eventos h2 {
+  text-align: center;
+  color: #1a202c;
+  margin-bottom: 1.5rem;
+}
+
+#lista-eventos {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#lista-eventos li {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+#lista-eventos li strong {
+  font-size: 1.1rem;
+  color: #0f172a;
+}
+
+#lista-eventos li p {
+  margin: 0.2rem 0;
+  color: #334155;
+  font-size: 0.95rem;
+}
+
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.boton-editar,
+.boton-eliminar {
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.boton-editar {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.boton-editar:hover {
+  background-color: #2563eb;
+}
+
+.boton-eliminar {
+  background-color: #ef4444;
+  color: white;
+}
+
+.boton-eliminar:hover {
+  background-color: #dc2626;
+}
+
+/* Botón volver */
+.boton-volver {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.boton-volver:hover {
+  background-color: #0056b3;
+}
+
+/* ===== MODO OSCURO ===== */
+body.tema-oscuro .panel-eventos {
+  background-color: #1e293b;
+  color: #f1f5f9;
+}
+
+body.tema-oscuro #lista-eventos li {
+  background-color: #334155;
+  border-color: #475569;
+}
+
+body.tema-oscuro #lista-eventos li strong {
+  color: #e2e8f0;
+}
