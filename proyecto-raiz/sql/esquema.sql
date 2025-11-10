@@ -1,5 +1,5 @@
 -- =====================================================
---  BASE DE DATOS: TimeUp
+--  BASE DE DATOS: TimeUp (versión mejorada)
 -- =====================================================
 
 CREATE DATABASE IF NOT EXISTS TimeUp
@@ -28,11 +28,7 @@ CREATE TABLE grupos (
     id_grupo INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     descripcion TEXT,
-    id_admin INT NOT NULL,
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_admin) REFERENCES usuarios(id_usuario)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- =====================================================
@@ -52,7 +48,7 @@ CREATE TABLE usuarios_grupos (
 );
 
 -- =====================================================
---  TABLA: Disenos (para personalización)
+--  TABLA: Diseños
 -- =====================================================
 CREATE TABLE disenos (
     id_diseno INT AUTO_INCREMENT PRIMARY KEY,

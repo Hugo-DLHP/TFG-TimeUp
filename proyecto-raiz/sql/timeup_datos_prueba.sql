@@ -2,8 +2,6 @@ USE TimeUp;
 
 -- ===========================
 -- INSERT: Usuarios (10)
--- 5 contraseñas en texto plano, 5 simulando bcrypt
--- Campo foto = NULL
 -- ===========================
 INSERT INTO usuarios (id_usuario, nombre, correo, contrasena, rol, foto, fecha_creacion) VALUES
 (1,  'María López',     'maria.lopez@example.com',    '$2y$10$Zh00Lm/5k8GSaHs7ocICCuG1s1iClhTtmwU53/q16iMfLkc6Lqq9e',  'admin',  NULL, '2024-11-12 09:15:00'),
@@ -19,15 +17,13 @@ INSERT INTO usuarios (id_usuario, nombre, correo, contrasena, rol, foto, fecha_c
 
 -- ===========================
 -- INSERT: Grupos (2)
--- id_admin apunta a usuarios 1 y 6
 -- ===========================
-INSERT INTO grupos (id_grupo, nombre, descripcion, id_admin, fecha_creacion) VALUES
-(1, 'Equipo Alpha', 'Grupo principal encargado de los proyectos A y coordinación interna.', 1, '2025-01-10 10:00:00'),
-(2, 'Equipo Beta',  'Grupo secundario centrado en soporte y QA.', 6, '2025-06-05 09:00:00');
+INSERT INTO grupos (id_grupo, nombre, descripcion, fecha_creacion) VALUES
+(1, 'Equipo Alpha', 'Grupo principal encargado de los proyectos A y coordinación interna.', '2025-01-10 10:00:00'),
+(2, 'Equipo Beta',  'Grupo secundario centrado en soporte y QA.', '2025-06-05 09:00:00');
 
 -- ===========================
 -- INSERT: Usuarios_Grupos (5 por grupo)
--- (Se asigna rol 'administrador' al admin)
 -- ===========================
 -- Grupo 1: usuarios 1..5 (1 administrador)
 INSERT INTO usuarios_grupos (id_usuario, id_grupo, rol_en_grupo) VALUES
@@ -64,7 +60,6 @@ INSERT INTO calendarios (id_calendario, id_grupo, nombre, id_diseno, fecha_creac
 
 -- ===========================
 -- INSERT: Eventos (3)
--- 2 eventos para calendario 1, 1 evento para calendario 2
 -- ===========================
 INSERT INTO eventos (id_evento, id_calendario, titulo, descripcion, fecha_inicio, fecha_fin, repeticion, ubicacion) VALUES
 (1, 1, 'Kickoff Proyecto A',   'Reunión de inicio del Proyecto A: objetivos, entregables y responsables.', '2025-01-15 09:30:00', '2025-01-15 11:00:00', 'ninguno', 'Sala 4 - Edificio Central'),
@@ -73,7 +68,6 @@ INSERT INTO eventos (id_evento, id_calendario, titulo, descripcion, fecha_inicio
 
 -- ===========================
 -- INSERT: Tareas (serie de tareas)
--- varias tareas en ambos calendarios con fechas límite realistas
 -- ===========================
 INSERT INTO tareas (id_tarea, id_calendario, descripcion, estado, fecha_limite) VALUES
 (1, 1, 'Preparar agenda para Kickoff Proyecto A', 'completada', '2025-01-13'),
@@ -87,7 +81,6 @@ INSERT INTO tareas (id_tarea, id_calendario, descripcion, estado, fecha_limite) 
 
 -- ===========================
 -- (Opcional) INSERT: Notificaciones de ejemplo
--- notifican a algunos usuarios sobre eventos/tareas
 -- ===========================
 -- INSERT INTO notificaciones (id_notificacion, id_usuario, id_evento, id_tarea, tipo, fecha_envio, estado) VALUES
 -- (1, 1, 1, NULL, 'recordatorio', '2025-01-14 09:00:00', 'enviada'),
