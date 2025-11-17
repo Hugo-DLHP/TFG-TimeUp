@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- 
+    ===========================================================================
+    CONFIGURACIÓN BÁSICA DEL DOCUMENTO HTML - PÁGINA DE PERFIL
+    ===========================================================================
+    Define el charset, viewport para responsive, título y enlaces a CSS.
+    ===========================================================================
+    -->
+    <meta charset="UTF-8"> <!-- Codificación de caracteres para español -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Viewport para responsive -->
+    <title>Mi Perfil - TimeUp</title> <!-- Título que aparece en la pestaña del navegador -->
+    
+    <!-- 
+    HOJAS DE ESTILO EN CASCADA (CSS)
+    ================================
+    Orden de carga importante: 
+    1. style1.css (base) -> Estilos globales y componentes base
+    2. perfil.css (específico) -> Estilos específicos que pueden sobrescribir los base
+    -->
+    <link rel="stylesheet" href="../css/style1.css"> <!-- CSS base del sistema -->
+    <link rel="stylesheet" href="perfil.css"> <!-- CSS específico para perfil -->
+</head>
+<body>
+    <!-- 
+    ===========================================================================
+    ESTRUCTURA PRINCIPAL DEL CONTENIDO - PÁGINA DE PERFIL
+    ===========================================================================
+    La página está estructurada semánticamente con:
+    - header: Encabezado de la página
+    - main (implícito): Contenido principal dentro de .container
+    - section: Secciones temáticas del perfil
+    - form: Formularios para edición de datos
+    ===========================================================================
+    -->
+    
+    <!-- CONTENEDOR PRINCIPAL - Aplica estilos de centrado y espaciado -->
+    <div class="container">
+        
+        <!-- ENCABEZADO DE LA PÁGINA DE PERFIL -->
+        <header class="profile-header">
+            <!-- Título principal de la página -->
+            <h1>Mi Perfil</h1>
+        </header>
+        
+        <!-- CONTENIDO PRINCIPAL DEL PERFIL -->
+        <div class="profile-content">
+            
+            <!-- 
+            SECCIÓN 1: INFORMACIÓN PERSONAL
+            ==============================
+            Contiene el formulario para editar datos básicos del usuario.
+            -->
+            <section class="profile-section">
+                <h2>Información Personal</h2> <!-- Título de la sección -->
+                
+                <!-- FORMULARIO DE INFORMACIÓN PERSONAL -->
+                <form id="profile-form">
+                    <!-- GRUPO DE CAMPO: NOMBRE -->
+                    <div class="form-group">
+                        <label for="nombre">Nombre:</label> <!-- Etiqueta asociada al input -->
+                        <input type="text" id="nombre" name="nombre" required>
+                        <!-- 
+                        Atributos del input:
+                        - type="text": Campo de texto
+                        - id="nombre": Identificador único para asociar con label
+                        - name="nombre": Nombre para el envío del formulario
+                        - required: Campo obligatorio (validación HTML5)
+                        -->
+                    </div>
+                    
+                    <!-- GRUPO DE CAMPO: CORREO ELECTRÓNICO -->
+                    <div class="form-group">
+                        <label for="correo">Correo electrónico:</label>
+                        <input type="email" id="correo" name="correo" required>
+                        <!-- type="email": Valida formato de email automáticamente -->
+                    </div>
+                    
+                    <!-- GRUPO DE CAMPO: FOTO DE PERFIL -->
+                    <div class="form-group">
+                        <label for="foto-perfil">Foto de perfil:</label>
+                        
+                        <!-- CONTENEDOR PARA LA SUBIDA DE FOTO -->
+                        <div class="photo-upload">
+                            <!-- PREVIEW DE LA FOTO ACTUAL -->
+                            <img id="preview-foto" src="../recursos/default-avatar.png" alt="Foto de perfil">
+                            <!-- 
+                            Atributos del img:
+                            - id="preview-foto": Referencia para JavaScript
+                            - src: Ruta de la imagen por defecto
+                            - alt: Texto alternativo para accesibilidad
+                            -->
+                            
+                            <!-- INPUT FILE OCULTO - Se activa mediante JavaScript -->
+                            <input type="file" id="foto-perfil" accept="image/*" style="display: none;">
+                            <!-- 
+                            Atributos del input file:
+                            - type="file": Para selección de archivos
+                            - accept="image/*": Solo acepta archivos de imagen
+                            - style="display: none": Oculto, se activa con el botón
+                            -->
+                            
+                            <!-- BOTÓN PARA ACTIVAR LA SELECCIÓN DE ARCHIVO -->
+                            <button type="button" id="btn-cambiar-foto" class="btn-secondary">
+                                Cambiar foto
+                            </button>
+                            <!-- 
+                            Atributos del botón:
+                            - type="button": No envía el formulario
+                            - id="btn-cambiar-foto": Referencia para JavaScript
+                            - class="btn-secondary": Estilo de botón secundario
+                            -->
+                        </div>
+                    </div>
+                    
+                    <!-- BOTÓN DE ENVÍO DEL FORMULARIO -->
+                    <button type="submit" class="btn-primary">Guardar cambios</button>
+                    <!-- type="submit": Envía el formulario cuando se hace clic -->
+                </form>
+            </section>
+            
+            <!-- 
+            SECCIÓN 2: PREFERENCIAS DE LA APLICACIÓN
+            =======================================
+            Contiene configuraciones de personalización para el usuario.
+            -->
+            <section class="profile-section">
+                <h2>Preferencias</h2>
+                
+                <!-- FORMULARIO DE PREFERENCIAS -->
+                <form id="preferences-form">
+                    <!-- GRUPO DE CAMPO: TEMA DE LA APLICACIÓN -->
+                    <div class="form-group">
+                        <label for="tema">Tema de la aplicación:</label>
+                        <select id="tema" name="tema">
+                            <option value="claro">Modo Claro</option>
+                            <option value="oscuro">Modo Oscuro</option>
+                        </select>
+                        <!-- 
+                        Select para elegir entre opciones predefinidas
+                        - option value: Valor que se envía al servidor
+                        - option text: Texto que ve el usuario
+                        -->
+                    </div>
+                    
+                    <!-- GRUPO DE CAMPO: VISTA DE CALENDARIO -->
+                    <div class="form-group">
+                        <label for="vista-calendario">Vista de calendario:</label>
+                        <select id="vista-calendario" name="vista-calendario">
+                            <option value="mensual">Mensual</option>
+                            <option value="semanal">Semanal</option>
+                            <option value="diario">Diario</option>
+                        </select>
+                    </div>
+                    
+                    <!-- GRUPO DE CAMPO: NOTIFICACIONES POR EMAIL (CHECKBOX) -->
+                    <div class="form-group">
+                        <!-- Label que envuelve el checkbox para mejor usabilidad -->
+                        <label>
+                            <input type="checkbox" id="notificaciones-email" name="notificaciones-email">
+                            Recibir notificaciones por email
+                        </label>
+                        <!-- 
+                        Checkbox para opción binaria (sí/no)
+                        - type="checkbox": Permite selección múltiple
+                        -->
+                    </div>
+                    
+                    <!-- BOTÓN DE ENVÍO DEL FORMULARIO DE PREFERENCIAS -->
+                    <button type="submit" class="btn-primary">Guardar preferencias</button>
+                </form>
+            </section>
+        </div>
+    </div>
+    
+    <!-- 
+    ===========================================================================
+    SCRIPTS JAVASCRIPT
+    ===========================================================================
+    Se carga al final del body para no bloquear la renderización de la página.
+    ===========================================================================
+    -->
+    <script src="perfil.js"></script>
+    <!-- 
+    Script específico para la funcionalidad de la página de perfil:
+    - Manejo de formularios
+    - Preview de imagen
+    - Validaciones
+    - Comunicación con API
+    -->
+</body>
+</html>

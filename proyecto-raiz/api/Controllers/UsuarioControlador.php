@@ -47,7 +47,6 @@ class UsuarioControlador extends ControladorBase
             'nombre' => $nombre,
             'correo' => $correo,
             'contrasena' => password_hash($contrasena, PASSWORD_DEFAULT),
-            'rol' => 'lector',
             'foto' => $rutaFoto,
             'fecha_creacion' => date('Y-m-d H:i:s')
         ]);
@@ -63,46 +62,82 @@ class UsuarioControlador extends ControladorBase
         }
     }
 
-    public function iniciarSesion()
+    public function actualizar()
     {
-        // Leer datos del body JSON
-        $data = json_decode(file_get_contents("php://input"), true);
-        $correo = $data['correo'] ?? '';
-        $contrasena = $data['contrasena'] ?? '';
+        try {
+            // Verificar que el usuario está logueado
+            $id_usuario = $this->verificarAutenticacion();
 
-        // Validación simple
-        if (empty($correo) || empty($contrasena)) {
-            echo json_encode(['error' => 'Debe completar todos los campos.']);
-            return;
+            // Obtener datos actuales del usuario (para la foto antigua)
+            $usuarioActual = Usuario::find($id_usuario);
+            if (!$usuarioActual) {
+                return $this->jsonResponse(['error' => 'Usuario no encontrado.'], 404);
+            }
+
+            // Obtener datos del formulario (es POST, no JSON)
+            $nombre = $_POST['nombre'] ?? null;
+            $correo = $_POST['correo'] ?? null;
+            $foto = $_FILES['fotoPerfil'] ?? null;
+
+            // Validaciones básicas
+            if (!$nombre || !$correo) {
+                return $this->jsonResponse(['error' => 'Nombre y correo son obligatorios.'], 400);
+            }
+
+            // Validar si el correo ha cambiado y ya existe
+            if ($correo !== $usuarioActual['correo'] && Usuario::findByCorreo($correo)) {
+                return $this->jsonResponse(['error' => 'El correo ya está registrado.'], 409);
+            }
+
+            // Manejar la subida de la nueva foto
+            $rutaFoto = $usuarioActual['foto']; 
+
+            if ($foto && $foto['error'] === UPLOAD_ERR_OK) {
+                // Lógica de subida (similar a tu 'registrar')
+                $nombreArchivo = uniqid('user_') . "_" . basename($foto['name']);
+                $rutaDestino = __DIR__ . '/../../public/recursos/perfiles/' . $nombreArchivo;
+
+                if (!file_exists(dirname($rutaDestino))) {
+                    mkdir(dirname($rutaDestino), 0777, true);
+                }
+
+                if (move_uploaded_file($foto['tmp_name'], $rutaDestino)) {
+                    // Si se sube con éxito, actualizamos la ruta
+                    $rutaFoto = 'recursos/perfiles/' . $nombreArchivo;
+
+                    // Borrar la foto antigua, si existía
+                    if ($usuarioActual['foto'] && file_exists(__DIR__ . '/../../public/' . $usuarioActual['foto'])) {
+                        unlink(__DIR__ . '/../../public/' . $usuarioActual['foto']);
+                    }
+                }
+            }
+
+            // Preparar datos para la BD
+            $datosActualizados = [
+                'id_usuario' => $id_usuario, 
+                'nombre' => $nombre,
+                'correo' => $correo,
+                'foto' => $rutaFoto
+            ];
+
+            // Actualizar en la BD
+            $usuario = new Usuario($datosActualizados);
+            $usuario->update(); // Heredado de ModeloBase
+
+            // Devolver el usuario actualizado (para localStorage)
+            $this->jsonResponse([
+                'mensaje' => 'Perfil actualizado correctamente',
+                'usuario' => [
+                    'id_usuario' => $id_usuario,
+                    'nombre' => $nombre,
+                    'correo' => $correo,
+                    'foto' => $rutaFoto
+                ]
+            ], 200);
+
+        } catch (Throwable $e) {
+            $this->jsonResponse(['error' => 'Error al actualizar: ' . $e->getMessage()], 500);
         }
-
-        require_once __DIR__ . '/../Models/Usuario.php';
-        $usuario = Usuario::findByCorreo($correo);
-
-        if (!$usuario) {
-            echo json_encode(['error' => 'Usuario no encontrado.']);
-            return;
-        }
-
-        // Verificar contraseña
-        if (!password_verify($contrasena, $usuario['contrasena'])) {
-            echo json_encode(['error' => 'Contraseña incorrecta.']);
-            return;
-        }
-
-        // Si todo es correcto
-        echo json_encode([
-            'exito' => true,
-            'mensaje' => 'Inicio de sesión correcto',
-            'usuario' => [
-                'id_usuario' => $usuario['id_usuario'],
-                'nombre' => $usuario['nombre'],
-                'correo' => $usuario['correo'],
-                'rol' => $usuario['rol'],
-                'foto' => $usuario['foto'] ?? 'recursos/perfiles/default.png'
-
-            ]
-        ]);
     }
 
 }

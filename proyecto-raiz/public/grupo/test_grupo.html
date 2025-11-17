@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Test API - Gestión de Grupos</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f9f9f9; }
+        .container { max-width: 800px; margin: auto; }
+        .seccion { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        h2 { color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 5px; }
+        form { display: grid; grid-template-columns: 150px 1fr; gap: 10px; }
+        label { font-weight: 600; text-align: right; padding-top: 5px; }
+        input[type="text"], input[type="email"], input[type="password"], input[type="number"] {
+            width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+        }
+        button {
+            grid-column: 2; padding: 10px; background-color: #007bff; color: white;
+            border: none; border-radius: 4px; cursor: pointer; font-size: 15px;
+        }
+        #btn-mis-grupos { grid-column: 1 / -1; background-color: #17a2b8; }
+        pre { background: #222; color: #fff; padding: 15px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Test de Gestión de Grupos</h1>
+
+        <div class="seccion">
+            <h2>Paso 0: Iniciar Sesión</h2>
+            <form id="form-login">
+                <label for="correo">Correo:</label>
+                <input type="email" id="correo" value="maria.lopez@example.com" required>
+                <label for="contrasena">Contraseña:</label>
+                <input type="password" id="contrasena" value="123456" required> <button type="submit">Login</button>
+            </form>
+        </div>
+
+        <div class="seccion">
+            <h2>Paso 1: Crear Grupo</h2>
+            <form id="form-crear-grupo">
+                <label for="grupo-nombre">Nombre:</label>
+                <input type="text" id="grupo-nombre" value="Mi Nuevo Grupo" required>
+                <label for="grupo-desc">Descripción:</label>
+                <input type="text" id="grupo-desc" value="Descripción de prueba">
+                <button type="submit">Crear Grupo</button>
+            </form>
+        </div>
+
+        <div class="seccion">
+            <h2>Paso 2: Ver Mis Grupos</h2>
+            <button id="btn-mis-grupos">Cargar mis grupos</button>
+        </div>
+
+        <div class="seccion">
+            <h2>Paso 3: Generar Invitación</h2>
+            <p>Debes ser admin del grupo (el que creaste en Paso 1).</p>
+            <form id="form-generar-invitacion">
+                <label for="inv-id-grupo">ID del Grupo:</label>
+                <input type="number" id="inv-id-grupo" placeholder="Ej: 3 (del grupo recién creado)" required>
+                <label for="inv-usos">Usos Máximos:</label>
+                <input type="number" id="inv-usos" value="10">
+                <button type="submit">Generar Token</button>
+            </form>
+        </div>
+
+        <div class="seccion">
+            <h2>Paso 4: Unirse a Grupo (Probar con otro usuario)</h2>
+            <p>Cierra sesión (borra cookies) y logueate como otro usuario (ej: javier.gomez) para probar esto.</p>
+            <form id="form-unir-grupo">
+                <label for="token">Token Invitación:</label>
+                <input type="text" id="token" placeholder="Pega el token generado en Paso 3" required>
+                <button type="submit">Unirme al Grupo</button>
+            </form>
+        </div>
+
+        <h3>Respuesta de la API:</h3>
+        <pre id="respuesta">Esperando acción...</pre>
+    </div>
+
+    <script>
+        const output = document.getElementById('respuesta');
+
+        const API_URL = 'http://localhost/TFG/proyecto-raiz/api/index.php';
+
+        // --- MANEJADOR DE LOGIN ---
+        document.getElementById('form-login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            output.textContent = 'Iniciando sesión...';
+
+            const correo = document.getElementById('correo').value.trim();
+            const contrasena = document.getElementById('contrasena').value.trim();
+
+            try {
+                const res = await fetch(`${API_URL}?controlador=Autenticacion&accion=login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ correo, contrasena })
+                });
+
+                const data = await res.json();
+                output.textContent = JSON.stringify(data, null, 2);
+
+                if (res.ok && data.exito) {
+                    output.textContent += "\n\n--- SESIÓN INICIADA (Cookie guardada) ---";
+                }
+            } catch (err) {
+                output.textContent = `Error de red: ${err.message}`;
+            }
+        });
+
+        // --- MANEJADOR CREAR GRUPO ---
+        document.getElementById('form-crear-grupo').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            output.textContent = 'Creando grupo...';
+
+            const body = {
+                nombre: document.getElementById('grupo-nombre').value,
+                descripcion: document.getElementById('grupo-desc').value
+            };
+
+            try {
+                const res = await fetch(`${API_URL}?controlador=Grupo&accion=crear`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                output.textContent = JSON.stringify(data, null, 2);
+
+                // Auto-fill para facilitar la prueba
+                if (res.ok && data.id_grupo) {
+                    document.getElementById('inv-id-grupo').value = data.id_grupo;
+                    output.textContent += `\n\n--- ID Grupo ${data.id_grupo} copiado al campo 'Generar Invitación' ---`;
+                }
+            } catch (err) {
+                output.textContent = `Error de red: ${err.message}`;
+            }
+        });
+
+        // --- MANEJADOR MIS GRUPOS (GET) ---
+        document.getElementById('btn-mis-grupos').addEventListener('click', async () => {
+            output.textContent = 'Cargando mis grupos...';
+
+            try {
+                const res = await fetch(`${API_URL}?controlador=Grupo&accion=misGrupos`, {
+                    method: 'GET' // No necesita body ni headers
+                });
+                const data = await res.json();
+                output.textContent = JSON.stringify(data, null, 2);
+            } catch (err) {
+                output.textContent = `Error de red: ${err.message}`;
+            }
+        });
+
+        // --- MANEJADOR GENERAR INVITACIÓN ---
+        document.getElementById('form-generar-invitacion').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            output.textContent = 'Generando invitación...';
+
+            const body = {
+                id_grupo: document.getElementById('inv-id-grupo').value,
+                usos_maximos: document.getElementById('inv-usos').value
+            };
+
+            try {
+                const res = await fetch(`${API_URL}?controlador=Invitacion&accion=crear`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                output.textContent = JSON.stringify(data, null, 2);
+                
+                // Auto-fill para facilitar la prueba
+                if (res.ok && data.token) {
+                     document.getElementById('token').value = data.token;
+                     output.textContent += `\n\n--- TOKEN ${data.token} copiado al campo 'Unirse' ---`;
+                }
+            } catch (err) {
+                output.textContent = `Error de red: ${err.message}`;
+            }
+        });
+
+        // --- MANEJADOR UNIRSE A GRUPO ---
+        document.getElementById('form-unir-grupo').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            output.textContent = 'Uniéndose al grupo...';
+
+            const body = {
+                token_invitacion: document.getElementById('token').value
+            };
+
+            try {
+                const res = await fetch(`${API_URL}?controlador=Grupo&accion=unirsePorCodigo`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                output.textContent = JSON.stringify(data, null, 2);
+            } catch (err) {
+                output.textContent = `Error de red: ${err.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

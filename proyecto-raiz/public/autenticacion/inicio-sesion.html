@@ -12,7 +12,10 @@
 <body>
   <!-- Encabezado con logo y botón de tema -->
   <header class="encabezado">
-    <img src="../recursos/logoTimeUp.png" alt="Logo de TimeUp" class="logo-calendario" id="logo-timeup">
+    <a href="../index.html">
+      <img src="../recursos/logoTimeUp.png" alt="Logo de TimeUp" class="logo-calendario" id="logo-timeup">
+    </a>
+    
     <button id="boton-tema" class="boton-tema" aria-label="Cambiar tema">🌙 Modo oscuro</button>
   </header>
 
@@ -55,7 +58,7 @@
       const contrasena = document.getElementById('contrasena').value.trim();
 
       try {
-        const response = await fetch('http://localhost/TFG/proyecto-raiz/api/index.php?controlador=Usuario&accion=iniciarSesion', {
+        const response = await fetch('http://localhost/TFG/proyecto-raiz/api/index.php?controlador=Autenticacion&accion=login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ correo, contrasena })

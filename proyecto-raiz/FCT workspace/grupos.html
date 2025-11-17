@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- 
+    ===========================================================================
+    CONFIGURACIÓN BÁSICA DEL DOCUMENTO HTML - PÁGINA DE GRUPOS
+    ===========================================================================
+    Define metadatos, título y enlaces a hojas de estilo para la gestión de grupos.
+    ===========================================================================
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Grupos - TimeUp</title>
+    
+    <!-- 
+    HOJAS DE ESTILO EN CASCADA (CSS)
+    ================================
+    Orden de carga:
+    1. style1.css - Estilos base del sistema (botones, formularios, utilidades)
+    2. perfil.css - Estilos de perfil (reutiliza componentes como .profile-section)
+    3. grupos.css - Estilos específicos para grupos (grid, modales, tarjetas)
+    -->
+    <link rel="stylesheet" href="../css/style1.css">
+    <link rel="stylesheet" href="perfil.css">
+    <link rel="stylesheet" href="grupos.css">
+</head>
+<body>
+    <!-- 
+    ===========================================================================
+    ESTRUCTURA PRINCIPAL - PÁGINA DE GESTIÓN DE GRUPOS
+    ===========================================================================
+    Contiene:
+    - Header con título y botón de acción
+    - Formulario de creación de grupos (inicialmente oculto)
+    - Lista dinámica de grupos
+    - Estados vacíos
+    - Modales para funcionalidades adicionales
+    ===========================================================================
+    -->
+    <div class="container">
+        <div class="grupos-container">
+            
+            <!-- 
+            ENCABEZADO DE LA PÁGINA DE GRUPOS
+            ================================
+            Muestra el título principal y el botón para crear nuevo grupo.
+            -->
+            <header class="grupos-header">
+                <h1>Mis Grupos</h1>
+                <!-- 
+                BOTÓN PRINCIPAL DE ACCIÓN - CREAR NUEVO GRUPO
+                ============================================
+                Al hacer clic, muestra el formulario de creación.
+                -->
+                <button id="btn-crear-grupo" class="btn-primary">Crear Nuevo Grupo</button>
+            </header>
+            
+            <!-- 
+            FORMULARIO DE CREACIÓN DE GRUPO
+            ==============================
+            Inicialmente oculto (display: none). Se muestra al hacer clic en "Crear Nuevo Grupo".
+            Permite al usuario crear un nuevo grupo con nombre y descripción.
+            -->
+            <section id="form-crear-grupo" class="form-crear-grupo" style="display: none;">
+                <h2>Crear Nuevo Grupo</h2>
+                
+                <!-- FORMULARIO DE CREACIÓN -->
+                <form id="crear-grupo-form">
+                    <!-- CAMPO: NOMBRE DEL GRUPO -->
+                    <div class="form-group">
+                        <label for="nombre-grupo">Nombre del grupo:</label>
+                        <input type="text" id="nombre-grupo" name="nombre-grupo" required maxlength="50">
+                        <!-- 
+                        Atributos importantes:
+                        - required: Campo obligatorio
+                        - maxlength="50": Limita a 50 caracteres
+                        -->
+                    </div>
+                    
+                    <!-- CAMPO: DESCRIPCIÓN DEL GRUPO -->
+                    <div class="form-group">
+                        <label for="descripcion-grupo">Descripción:</label>
+                        <textarea id="descripcion-grupo" name="descripcion-grupo" rows="3" maxlength="200"></textarea>
+                        <!-- 
+                        Atributos del textarea:
+                        - rows="3": Altura inicial de 3 líneas
+                        - maxlength="200": Limita a 200 caracteres
+                        -->
+                    </div>
+                    
+                    <!-- BOTONES DE ACCIÓN DEL FORMULARIO -->
+                    <div class="form-group">
+                        <button type="submit" class="btn-primary">Crear Grupo</button>
+                        <button type="button" id="btn-cancelar-crear" class="btn-secondary">Cancelar</button>
+                        <!-- 
+                        Botón Cancelar:
+                        - type="button": No envía el formulario
+                        - class="btn-secondary": Estilo secundario
+                        -->
+                    </div>
+                </form>
+            </section>
+            
+            <!-- 
+            LISTA DE GRUPOS - CONTENEDOR DINÁMICO
+            =====================================
+            Este div se llena dinámicamente con JavaScript con las tarjetas de grupo.
+            Utiliza CSS Grid para layout responsive.
+            -->
+            <div id="lista-grupos" class="lista-grupos">
+                <!-- 
+                CONTENIDO DINÁMICO:
+                Las tarjetas de grupo se generan aquí mediante JavaScript
+                basándose en los datos obtenidos del servidor.
+                -->
+            </div>
+            
+            <!-- 
+            ESTADO VACÍO - CUANDO NO HAY GRUPOS
+            ===================================
+            Se muestra cuando el usuario no tiene grupos creados.
+            Proporciona una llamada a la acción clara.
+            -->
+            <div id="sin-grupos" class="profile-section" style="display: none; text-align: center;">
+                <h2>No tienes grupos aún</h2>
+                <p>Crea tu primer grupo para empezar a colaborar con otros usuarios.</p>
+                <!-- 
+                BOTÓN DE ACCIÓN PARA ESTADO VACÍO
+                ================================
+                Mismo comportamiento que el botón principal del header.
+                -->
+                <button id="btn-crear-primer-grupo" class="btn-primary">Crear mi primer grupo</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 
+    ===========================================================================
+    MODALES - VENTANAS FLOTANTES PARA FUNCIONALIDADES ESPECÍFICAS
+    ===========================================================================
+    Los modales aparecen sobre el contenido principal para acciones específicas
+    sin navegar a otra página.
+    ===========================================================================
+    -->
+    
+    <!-- 
+    MODAL 1: CÓDIGO DE INVITACIÓN
+    =============================
+    Se muestra cuando un administrador hace clic en "Invitar miembros" en un grupo.
+    Genera y muestra un código único que se puede compartir.
+    -->
+    <div id="modal-invitacion" class="modal">
+        <div class="modal-contenido">
+            <!-- BOTÓN CERRAR (X) - Esquina superior derecha -->
+            <button class="cerrar-modal">&times;</button>
+            
+            <h2>Invitar miembros al grupo</h2>
+            <p>Comparte este código con las personas que quieras invitar al grupo:</p>
+            
+            <!-- CONTENEDOR DEL CÓDIGO DE INVITACIÓN -->
+            <div id="codigo-invitacion" class="codigo-invitacion">Cargando...</div>
+            <!-- 
+            Este div se llena dinámicamente con el código generado por el servidor.
+            Clase .codigo-invitacion le da el estilo de fondo y borde punteado.
+            -->
+            
+            <!-- BOTONES DE ACCIÓN DEL MODAL -->
+            <div class="botones-codigo">
+                <button id="btn-copiar-codigo" class="btn-primary">Copiar código</button>
+                <button id="btn-cerrar-invitacion" class="btn-secondary">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 
+    MODAL 2: LISTA DE MIEMBROS DEL GRUPO
+    ====================================
+    Se muestra cuando un usuario hace clic en "Ver miembros" en una tarjeta de grupo.
+    Muestra todos los miembros del grupo con sus roles.
+    -->
+    <div id="modal-miembros" class="modal">
+        <div class="modal-contenido">
+            <!-- BOTÓN CERRAR (X) -->
+            <button class="cerrar-modal">&times;</button>
+            
+            <!-- TÍTULO DINÁMICO - Se actualiza con el nombre del grupo -->
+            <h2 id="titulo-miembros">Miembros del grupo</h2>
+            
+            <!-- LISTA DINÁMICA DE MIEMBROS -->
+            <div id="lista-miembros" class="lista-miembros">
+                <!-- 
+                CONTENIDO DINÁMICO:
+                Los miembros del grupo se generan aquí mediante JavaScript
+                con estructura: avatar + nombre + rol (admin/miembro)
+                -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 
+    ===========================================================================
+    SCRIPTS JAVASCRIPT
+    ===========================================================================
+    Carga el script específico para la funcionalidad de grupos.
+    ===========================================================================
+    -->
+    <script src="grupos.js"></script>
+    <!-- 
+    grupos.js contiene:
+    - Gestión del estado de la aplicación (array de grupos)
+    - Manipulación del DOM para mostrar grupos
+    - Lógica de formularios (crear grupo)
+    - Funcionalidad de modales (invitación, miembros)
+    - Comunicación con API (simulada actualmente)
+    -->
+</body>
+</html>

@@ -86,5 +86,33 @@ BEGIN
     END IF;
 END$$
 
+
+
+-- =====================================================
+--  TRIGGER 4: Prevenir expulsión del ultimo admin
+-- =====================================================
+CREATE TRIGGER tr_prevenir_expulsion_ultimo_admin
+BEFORE DELETE ON usuarios_grupos
+FOR EACH ROW
+BEGIN
+    DECLARE v_admin_count INT;
+    
+    -- Si el que se va es administrador
+    IF OLD.rol_en_grupo = 'administrador' THEN
+        -- Contamos cuántos admins quedan (excluyendo al que se va)
+        SELECT COUNT(*) INTO v_admin_count
+        FROM usuarios_grupos
+        WHERE id_grupo = OLD.id_grupo 
+          AND rol_en_grupo = 'administrador'
+          AND id_usuario != OLD.id_usuario;
+          
+        -- Si no queda ninguno, error
+        IF v_admin_count = 0 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Error: No se puede expulsar/salir. El grupo debe tener al menos un administrador.';
+        END IF;
+    END IF;
+END$$
+
 -- Restauramos el delimitador original
 DELIMITER ;

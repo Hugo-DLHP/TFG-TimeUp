@@ -1,0 +1,287 @@
+/* 
+ * RESET CSS Y CONFIGURACIÓN GLOBAL
+ * Normaliza los estilos entre diferentes navegadores y establece
+ * valores base consistentes para toda la aplicación.
+ */
+* {
+    margin: 0;          
+    padding: 0;         
+    box-sizing: border-box; 
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente moderna y legible */
+    line-height: 1.6;   /* Espaciado entre líneas para mejor legibilidad */
+    color: #333;        /* Color de texto principal (gris oscuro) */
+    background-color: #f8f9fa; /* Color de fondo suave (gris muy claro) */
+    min-height: 100vh;  /* Garantiza que el body ocupe al menos toda la pantalla */
+}
+
+/* 
+ * CONTENEDOR PRINCIPAL DE LA APLICACIÓN
+ * Contiene y centra todo el contenido de cada página con un ancho máximo
+ * para evitar que se expanda demasiado en pantallas grandes.
+ */
+.container {
+    max-width: 1200px;  /* Ancho máximo en pantallas grandes */
+    margin: 0 auto;     /* Centra el contenedor horizontalmente */
+    padding: 2rem 1rem; /* Espaciado interno: 2rem arriba/abajo, 1rem izquierda/derecha */
+    min-height: calc(100vh - 80px); /* Altura mínima menos espacio para header/footer */
+}
+
+/* 
+ * JERARQUÍA DE ENCABEZADOS (h1-h6)
+ * Define estilos consistentes para todos los niveles de títulos
+ * con una escala tipográfica clara y colores corporativos.
+ */
+h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 1rem;    /* Espacio inferior consistente */
+    color: #2c3e50;        /* Color corporativo secundario (azul grisáceo oscuro) */
+    font-weight: 600;      /* Peso de fuente semi-negrita para mejor legibilidad */
+    line-height: 1.3;      /* Espaciado compacto para títulos */
+}
+
+/* Encabezado principal de página - Mayor jerarquía visual */
+h1 {
+    font-size: 2.5rem;     /* Tamaño grande para títulos principales */
+    color: #007bff;        /* Color corporativo primario (azul) */
+}
+
+/* Encabezado secundario - Para secciones principales */
+h2 {
+    font-size: 2rem;       /* Tamaño mediano-grande */
+    border-bottom: 2px solid #007bff; /* Línea decorativa inferior azul */
+    padding-bottom: 0.5rem; /* Espacio entre texto y línea */
+}
+
+/* Encabezado terciario - Para subsecciones */
+h3 {
+    font-size: 1.5rem;     /* Tamaño mediano */
+}
+
+/* 
+ * ESTILOS PARA ENLACES (ETIQUETAS <a>)
+ * Define la apariencia de todos los hipervínculos con estados hover.
+ */
+a {
+    color: #007bff;        /* Color azul corporativo para enlaces */
+    text-decoration: none; /* Elimina el subrayado por defecto */
+    transition: color 0.3s ease; /* Transición suave al cambiar color */
+}
+
+a:hover {
+    color: #0056b3;        /* Color azul más oscuro al pasar el mouse */
+    text-decoration: underline; /* Subrayado solo en estado hover */
+}
+
+/* 
+ * SISTEMA DE BOTONES - COMPONENTES REUTILIZABLES
+ * Define estilos base para todos los botones de la aplicación
+ * con variantes primaria y secundaria.
+ */
+
+/* BOTÓN PRIMARIO - Para acciones principales */
+.btn-primary {
+    background: #007bff;   /* Fondo azul corporativo */
+    color: white;          /* Texto blanco para contraste */
+    padding: 0.6rem 1.2rem; /* Espaciado interno: 0.6rem vertical, 1.2rem horizontal */
+    border: none;          /* Sin borde por defecto */
+    border-radius: 4px;    /* Esquinas ligeramente redondeadas */
+    cursor: pointer;       /* Cursor de mano al pasar sobre el botón */
+    font-size: 1rem;       /* Tamaño de fuente estándar */
+    transition: background-color 0.3s ease, transform 0.1s ease; /* Transiciones suaves */
+}
+
+/* Estados interactivos del botón primario */
+.btn-primary:hover {
+    background: #0056b3;   /* Fondo más oscuro al pasar el mouse */
+    transform: translateY(-1px); /* Efecto de elevación sutil */
+}
+
+.btn-primary:active {
+    transform: translateY(0); /* Efecto de "presionado" al hacer clic */
+}
+
+/* BOTÓN SECUNDARIO - Para acciones menos importantes */
+.btn-secondary {
+    background: #6c757d;   /* Fondo gris para diferenciar de acciones primarias */
+    color: white;          /* Texto blanco para contraste */
+    padding: 0.6rem 1.2rem; /* Mismo espaciado que botón primario */
+    border: none;          /* Sin borde */
+    border-radius: 4px;    /* Mismo radio de borde */
+    cursor: pointer;       /* Mismo cursor */
+    transition: background-color 0.3s ease; /* Solo transición de color */
+}
+
+.btn-secondary:hover {
+    background: #545b62;   /* Gris más oscuro al pasar el mouse */
+}
+
+/* [MODIFICADO O AÑADIDO POR HUGO] 
+   Botón de Peligro (Eliminar)
+   Añadido para acciones destructivas como borrar grupos o expulsar miembros.
+*/
+.btn-danger {
+    background: #dc3545;   /* Color Rojo estándar para alertas */
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+/* [MODIFICADO O AÑADIDO POR HUGO]
+    Hover del botón de peligro 
+*/
+.btn-danger:hover {
+    background: #c82333;   /* Rojo más oscuro */
+    transform: translateY(-1px);
+}
+
+/* [MODIFICADO O AÑADIDO POR HUGO]
+    Active del botón de peligro 
+*/
+.btn-danger:active {
+    transform: translateY(0);
+}
+
+
+/* 
+ * SISTEMA DE MENSAJES PARA EL USUARIO
+ * ===================================
+ * Mensajes temporales que aparecen para confirmar acciones o mostrar errores.
+ * Se posicionan de forma fija en la esquina superior derecha.
+ */
+.mensaje {
+    position: fixed;       /* Posicionamiento fijo respecto a la ventana */
+    top: 20px;            /* 20px desde el borde superior */
+    right: 20px;          /* 20px desde el borde derecho */
+    padding: 1rem 1.5rem; /* Espaciado interno generoso */
+    border-radius: 4px;   /* Esquinas redondeadas */
+    z-index: 1000;        /* Alto z-index para estar sobre otros elementos */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Sombra suave para elevación */
+    animation: slideIn 0.3s ease; /* Animación de entrada */
+}
+
+/* Animación para deslizar mensajes desde la derecha */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%); /* Comienza fuera de la pantalla a la derecha */
+        opacity: 0;                  /* Completamente transparente */
+    }
+    to {
+        transform: translateX(0);    /* Termina en su posición normal */
+        opacity: 1;                  /* Completamente opaco */
+    }
+}
+
+/* Variante de mensaje: ÉXITO (operaciones completadas correctamente) */
+.mensaje-exito {
+    background: #d4edda;  /* Fondo verde muy claro */
+    color: #155724;       /* Texto verde oscuro */
+    border: 1px solid #c3e6cb; /* Borde verde claro */
+}
+
+/* Variante de mensaje: ERROR (problemas o validaciones fallidas) */
+.mensaje-error {
+    background: #f8d7da;  /* Fondo rojo muy claro */
+    color: #721c24;       /* Texto rojo oscuro */
+    border: 1px solid #f5c6cb; 
+}
+
+/* 
+ * SISTEMA DE FORMULARIOS - ESTRUCTURA BASE
+ * Estilos base para todos los formularios de la aplicación.
+ */
+
+/* GRUPO DE FORMULARIO - Contenedor para label + input */
+.form-group {
+    margin-bottom: 1rem;  /* Espacio entre grupos de campos */
+}
+
+/* ETIQUETAS DE FORMULARIO */
+.form-group label {
+    display: block;       /* Ocupa toda la línea (block) */
+    margin-bottom: 0.5rem; /* Espacio entre label y input */
+    font-weight: 500;     /* Peso semi-negrita para mejor legibilidad */
+    color: #555;          /* Color gris medio para las etiquetas */
+}
+
+/* CAMPOS DE FORMULARIO (inputs, selects, textareas) */
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;          /* Ocupa el 100% del ancho disponible */
+    padding: 0.5rem;      /* Espaciado interno cómodo */
+    border: 1px solid #ccc; /* Borde gris claro por defecto */
+    border-radius: 4px;   /* Esquinas ligeramente redondeadas */
+    font-size: 1rem;      /* Tamaño de fuente estándar */
+    transition: border-color 0.3s ease; /* Transición suave para el borde */
+}
+
+/* ESTADO FOCUS - Cuando el campo está seleccionado */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;        /* Elimina el outline por defecto del navegador */
+    border-color: #007bff; /* Borde azul corporativo al estar enfocado */
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25); /* Sombra azul suave alrededor */
+}
+
+/* 
+ * SISTEMA DE UTILIDADES - CLASES HELPER
+ * Clases reutilizables para espaciado, alineación y display.
+ * Siguen la metodología de utility-first CSS.
+ */
+
+/* Utilidades de alineación de texto */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+/* Utilidades de display (visualización) */
+.d-none { display: none; }      /* Oculta completamente el elemento */
+.d-block { display: block; }    /* Muestra como elemento block */
+.d-flex { display: flex; }      /* Muestra como contenedor flex */
+
+/* Utilidades para Flexbox */
+.justify-between { justify-content: space-between; } /* Espacio entre elementos */
+.align-center { align-items: center; }               /* Centra verticalmente */
+.flex-column { flex-direction: column; }             /* Dirección en columna */
+
+/* Utilidades de márgenes */
+.mt-1 { margin-top: 0.5rem; }   /* Margin top pequeño */
+.mt-2 { margin-top: 1rem; }     /* Margin top mediano */
+.mb-1 { margin-bottom: 0.5rem; } /* Margin bottom pequeño */
+.mb-2 { margin-bottom: 1rem; }  /* Margin bottom mediano */
+
+/* 
+ * DISEÑO RESPONSIVE - MEDIA QUERIES
+ * ================================
+ * Ajustes específicos para diferentes tamaños de pantalla.
+ * Mobile-first: Los estilos base son para móviles, estos ajustes son para pantallas más grandes.
+ */
+
+/* Tablets y dispositivos medianos (768px o menos) */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem 0.5rem; /* Reduce el padding en dispositivos más pequeños */
+    }
+    
+    h1 {
+        font-size: 2rem;      /* Reduce tamaño de h1 en móviles */
+    }
+    
+    h2 {
+        font-size: 1.5rem;    /* Reduce tamaño de h2 en móviles */
+    }
+    
+    .mensaje {
+        top: 10px;           /* Menos espacio desde el top */
+        right: 10px;         /* Menos espacio desde la derecha */
+        left: 10px;          /* También espacio a la izquierda */
+        text-align: center;  /* Centra el texto en móviles */
+    }
+}
