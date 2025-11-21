@@ -1,151 +1,358 @@
-const calendario = document.getElementById("calendario");
-const nombreMes = document.getElementById("nombre-mes");
-const mesAnterior = document.getElementById("mes-anterior");
-const mesSiguiente = document.getElementById("mes-siguiente");
+document.addEventListener('DOMContentLoaded', function() {
+    // --- REFERENCIAS A ELEMENTOS DEL DOM ---
+    // Elementos principales del calendario
+    const calendario = document.getElementById("calendario");
+    const nombreMes = document.getElementById("nombre-mes");
+    const mesAnterior = document.getElementById("mes-anterior");
+    const mesSiguiente = document.getElementById("mes-siguiente");
 
-let fechaActual = new Date();
+    // Elementos del Modal y Formulario
+    const modal = document.getElementById("modal-evento");
+    const tituloModal = document.getElementById("titulo-modal");
+    const cerrarModal = document.getElementById("cerrar-modal");
+    const formEvento = document.getElementById("form-evento");
+    const selectGrupo = document.getElementById("grupo-evento");
+    const btnEliminar = document.getElementById("btn-eliminar");
+    const btnGuardar = document.getElementById("btn-guardar");
 
-// --- Modal de creación de eventos ---
-const modal = document.getElementById("modal-evento");
-const cerrarModal = document.getElementById("cerrar-modal");
-const formEvento = document.getElementById("form-evento");
-let fechaSeleccionada = null;
+    // --- VARIABLES GLOBALES ---
+    const RUTA_API = 'http://localhost/TFG/proyecto-raiz/api/index.php';
+    let fechaActual = new Date(); // Fecha que se está visualizando
+    let eventos = [];             // Almacén temporal de eventos cargados
 
-function abrirModalEvento(dia, mes, año) {
-  fechaSeleccionada = new Date(año, mes, dia);
-  modal.classList.remove("oculto");
-}
+    // --- INICIALIZACIÓN ---
+    init();
 
-cerrarModal.addEventListener("click", () => modal.classList.add("oculto"));
-
-formEvento.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const nuevoEvento = {
-    titulo: document.getElementById("titulo").value,
-    descripcion: document.getElementById("descripcion").value,
-    inicio: document.getElementById("inicio").value,
-    fin: document.getElementById("fin").value,
-    lugar: document.getElementById("lugar").value,
-    participantes: document.getElementById("participantes").value,
-    repeticion: document.getElementById("repeticion").value,
-  };
-  guardarEvento(nuevoEvento);
-  modal.classList.add("oculto");
-});
-
-let eventos = JSON.parse(localStorage.getItem("eventos")) || [];
-
-// --- Guardar evento ---
-function guardarEvento(evento) {
-  eventos.push(evento);
-  localStorage.setItem("eventos", JSON.stringify(eventos));
-  generarCalendario(fechaActual.getMonth(), fechaActual.getFullYear());
-  actualizarListaTareas();
-}
-
-// --- Mostrar eventos en el calendario ---
-function mostrarEventosEnCalendario() {
-  eventos.forEach((evento) => {
-    const fechaEvento = new Date(evento.inicio);
-    if (
-      fechaEvento.getMonth() === fechaActual.getMonth() &&
-      fechaEvento.getFullYear() === fechaActual.getFullYear()
-    ) {
-      const dias = document.querySelectorAll(".dia");
-      dias.forEach((dia) => {
-        if (parseInt(dia.querySelector("h3")?.textContent) === fechaEvento.getDate()) {
-          const divEvento = document.createElement("div");
-          divEvento.classList.add("evento");
-          divEvento.textContent = evento.titulo;
-
-          // 🔹 Hacer evento arrastrable (Drag & Drop)
-          divEvento.setAttribute("draggable", "true");
-          divEvento.addEventListener("dragstart", (e) => {
-            e.dataTransfer.setData("titulo", evento.titulo);
-          });
-
-          dia.appendChild(divEvento);
-        }
-      });
+    function init() {
+        // Generar el calendario del mes actual
+        generarCalendario(fechaActual.getMonth(), fechaActual.getFullYear());
+        // Cargar la lista de grupos en el desplegable del formulario
+        cargarGruposEnSelect();
     }
-  });
-}
 
-// --- Generar calendario ---
-function generarCalendario(mes, año) {
-  calendario.innerHTML = "";
-  const primerDia = new Date(año, mes, 1);
-  const ultimoDia = new Date(año, mes + 1, 0);
-  const diasMes = ultimoDia.getDate();
-  const diaInicio = primerDia.getDay() === 0 ? 7 : primerDia.getDay();
+    // --- CARGA DE DATOS (API) ---
 
-  nombreMes.textContent = primerDia.toLocaleDateString("es-ES", {
-    month: "long",
-    year: "numeric",
-  });
+    /**
+     * Obtiene los grupos del usuario para llenar el <select> del formulario.
+     * Solo muestra grupos que tengan un calendario creado.
+     */
+    async function cargarGruposEnSelect() {
+        try {
+            const response = await fetch(`${RUTA_API}?controlador=Grupo&accion=misGrupos`);
+            const grupos = await response.json();
+            
+            selectGrupo.innerHTML = '<option value="">Selecciona un grupo...</option>';
+            
+            if(response.ok) {
+                grupos.forEach(g => {
+                    // El valor del option es el ID del CALENDARIO asociado al grupo
+                    if (g.id_calendario) {
+                        const option = document.createElement('option');
+                        option.value = g.id_calendario; 
+                        option.textContent = g.nombre;
+                        selectGrupo.appendChild(option);
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Error cargando grupos", error);
+        }
+    }
 
-  // Espacios vacíos antes del primer día
-  for (let i = 1; i < diaInicio; i++) {
-    calendario.appendChild(document.createElement("div"));
-  }
+    /**
+     * Pide al servidor los eventos de un mes y año específicos.
+     * Actualiza la variable global 'eventos' y redibuja el calendario.
+     */
+    async function cargarEventos(mes, anio) {
+        try {
+            // Formatear fecha a YYYY-MM para la API
+            const mesStr = `${anio}-${String(mes + 1).padStart(2, '0')}`;
+            const response = await fetch(`${RUTA_API}?controlador=Evento&accion=listar&mes=${mesStr}`);
+            
+            if (response.ok) {
+                eventos = await response.json();
+                mostrarEventosEnCalendario(); // Pintar los eventos recibidos
+            }
+        } catch (error) {
+            console.error("Error cargando eventos", error);
+        }
+    }
 
-  // Días del mes
-  for (let dia = 1; dia <= diasMes; dia++) {
-    const divDia = document.createElement("div");
-    divDia.classList.add("dia");
-    divDia.innerHTML = `<h3>${dia}</h3>`;
-    divDia.addEventListener("click", () => abrirModalEvento(dia, mes, año));
+    // --- RENDERIZADO DEL CALENDARIO ---
 
-    //  Permitir soltar eventos (Drop)
-    divDia.addEventListener("dragover", (e) => e.preventDefault());
-    divDia.addEventListener("drop", (e) => {
-      e.preventDefault();
-      const titulo = e.dataTransfer.getData("titulo");
-      moverEvento(titulo, dia, mes, año);
+    /**
+     * Crea la estructura HTML de la rejilla del calendario.
+     */
+    function generarCalendario(mes, año) {
+        calendario.innerHTML = ""; // Limpiar contenido previo
+        
+        // Cálculos de fechas
+        const primerDia = new Date(año, mes, 1);
+        const ultimoDia = new Date(año, mes + 1, 0);
+        const diasMes = ultimoDia.getDate();
+        const diaInicio = primerDia.getDay() === 0 ? 7 : primerDia.getDay(); // Ajuste para que Lunes sea 1
+        const hoy = new Date(); // Fecha real actual para marcar "HOY"
+
+        // Actualizar título del mes
+        nombreMes.textContent = primerDia.toLocaleDateString("es-ES", {
+            month: "long", year: "numeric",
+        });
+
+        // Cargar datos (Asíncrono)
+        cargarEventos(mes, año);
+
+        // Dibujar celdas vacías antes del día 1
+        for (let i = 1; i < diaInicio; i++) {
+            const vacio = document.createElement("div");
+            vacio.classList.add("dia-vacio");
+            calendario.appendChild(vacio);
+        }
+
+        // Dibujar celdas de los días (1 al 30/31)
+        for (let dia = 1; dia <= diasMes; dia++) {
+            const divDia = document.createElement("div");
+            divDia.classList.add("dia");
+            
+            // Si es el día de hoy, añadir clase especial
+            if (dia === hoy.getDate() && mes === hoy.getMonth() && año === hoy.getFullYear()) {
+                divDia.classList.add("hoy");
+            }
+
+            // Estructura interna de la celda
+            divDia.innerHTML = `<div class="numero-dia">${dia}</div>`;
+            divDia.dataset.dia = dia; // Data attribute para buscarlo luego
+            
+            // Evento de click en el día -> Abrir modal de creación
+            divDia.addEventListener("click", (e) => {
+                // Evitar que se abra si clickamos en un evento existente (propagación)
+                if(e.target === divDia || e.target.classList.contains("numero-dia")) {
+                    abrirModalNuevo(dia, mes, año);
+                }
+            });
+
+            calendario.appendChild(divDia);
+        }
+    }
+
+    /**
+     * Recorre los eventos cargados y crea los "chips" de color en las celdas correspondientes.
+     */
+    function mostrarEventosEnCalendario() {
+        // Limpiar eventos visuales previos para evitar duplicados
+        document.querySelectorAll('.evento-chip').forEach(e => e.remove());
+
+        eventos.forEach((evento) => {
+            const fecha = new Date(evento.fecha_inicio);
+            
+            // Verificar que el evento pertenece al mes visualizado
+            if (fecha.getMonth() === fechaActual.getMonth() && 
+                fecha.getFullYear() === fechaActual.getFullYear()) {
+                
+                const dia = fecha.getDate();
+                // Buscar la celda del día
+                const divDia = document.querySelector(`.dia[data-dia="${dia}"]`);
+                
+                if (divDia) {
+                    const divEvento = document.createElement("div");
+                    divEvento.classList.add("evento-chip");
+                    divEvento.textContent = evento.titulo;
+                    
+                    // Aplicar color dinámico del grupo
+                    divEvento.style.backgroundColor = evento.color || '#3788d8';
+                    
+                    // Click en el evento -> Abrir modal de edición/detalle
+                    divEvento.addEventListener("click", (e) => {
+                        e.stopPropagation(); // Detener propagación al día
+                        abrirModalEdicion(evento);
+                    });
+
+                    divDia.appendChild(divEvento);
+                }
+            }
+        });
+    }
+
+    // --- GESTIÓN DEL MODAL ---
+
+    /**
+     * Abre el modal vacío para crear un nuevo evento.
+     * Pre-rellena la fecha y hora con el día seleccionado.
+     */
+    function abrirModalNuevo(dia, mes, año) {
+        formEvento.reset();
+        document.getElementById("evento-id").value = ""; // Sin ID = Nuevo
+        tituloModal.textContent = "Nuevo Evento";
+        
+        // Formato ISO para datetime-local: YYYY-MM-DDTHH:MM
+        const fechaStr = `${año}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}T09:00`;
+        document.getElementById("inicio").value = fechaStr;
+        document.getElementById("fin").value = fechaStr; 
+        
+        // Configurar UI para creación
+        btnEliminar.style.display = "none"; // No se puede borrar lo que no existe
+        btnGuardar.style.display = "inline-block";
+        selectGrupo.disabled = false; // Permitir elegir grupo
+        formDisable(false); // Habilitar todos los campos
+
+        modal.classList.remove("oculto");
+    }
+
+    /**
+     * Abre el modal con los datos de un evento existente.
+     * Verifica permisos (Admin/Editor vs Miembro) para habilitar edición.
+     */
+    function abrirModalEdicion(evento) {
+        tituloModal.textContent = "Detalles del Evento";
+        
+        // Rellenar campos
+        document.getElementById("evento-id").value = evento.id_evento;
+        document.getElementById("titulo").value = evento.titulo;
+        document.getElementById("descripcion").value = evento.descripcion || "";
+        
+        const inicioISO = new Date(evento.fecha_inicio).toISOString().slice(0, 16);
+        const finISO = new Date(evento.fecha_fin).toISOString().slice(0, 16);
+        document.getElementById("inicio").value = inicioISO;
+        document.getElementById("fin").value = finISO;
+        document.getElementById("lugar").value = evento.ubicacion || "";
+        document.getElementById("repeticion").value = evento.repeticion;
+        
+        selectGrupo.value = evento.id_calendario; 
+        selectGrupo.disabled = true; // No se puede cambiar el grupo de un evento existente
+
+        // GUARDAR DATOS PARA BORRADO (Necesarios para la lógica de excepciones)
+        btnEliminar.dataset.idEvento = evento.id_evento;
+        btnEliminar.dataset.esRepetitivo = (evento.repeticion !== 'ninguno');
+        btnEliminar.dataset.fechaInstancia = evento.fecha_inicio;
+
+        // VERIFICAR PERMISOS
+        const esAdmin = (evento.rol_en_grupo === 'administrador' || evento.rol_en_grupo === 'editor');
+        if (esAdmin) {
+            // Modo Edición
+            btnEliminar.style.display = "inline-block";
+            btnGuardar.style.display = "inline-block";
+            formDisable(false);
+        } else {
+            // Modo Lectura
+            tituloModal.textContent = "Detalles (Lectura)";
+            btnEliminar.style.display = "none";
+            btnGuardar.style.display = "none";
+            formDisable(true);
+        }
+        modal.classList.remove("oculto");
+    }
+
+    // Función auxiliar para deshabilitar/habilitar campos del formulario
+    function formDisable(estado) {
+        const inputs = formEvento.querySelectorAll("input, textarea, select");
+        inputs.forEach(input => {
+            if(input.id !== "grupo-evento") 
+                input.disabled = estado;
+        });
+    }
+
+    // Cerrar modal
+    cerrarModal.addEventListener("click", () => modal.classList.add("oculto"));
+
+    // --- ACCIONES DEL USUARIO (GUARDAR / ELIMINAR) ---
+
+    // Envío del formulario (Crear o Actualizar)
+    formEvento.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        
+        const idEvento = document.getElementById("evento-id").value;
+        const esNuevo = !idEvento;
+        
+        // Recoger datos del formulario
+        const datos = {
+            id_calendario: document.getElementById("grupo-evento").value,
+            titulo: document.getElementById("titulo").value,
+            descripcion: document.getElementById("descripcion").value,
+            fecha_inicio: document.getElementById("inicio").value,
+            fecha_fin: document.getElementById("fin").value,
+            ubicacion: document.getElementById("lugar").value,
+            repeticion: document.getElementById("repeticion").value
+        };
+
+        // Decidir endpoint
+        let url = esNuevo 
+            ? `${RUTA_API}?controlador=Evento&accion=crear`
+            : `${RUTA_API}?controlador=Evento&accion=actualizar`;
+
+        if (!esNuevo) datos.id_evento = idEvento;
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+            });
+            
+            if (response.ok) {
+                modal.classList.add("oculto");
+                // Recargar calendario para ver los cambios
+                generarCalendario(fechaActual.getMonth(), fechaActual.getFullYear());
+            } else {
+                const err = await response.json();
+                alert("Error: " + err.error);
+            }
+        } catch (error) {
+            console.error(error);
+        }
     });
 
-    calendario.appendChild(divDia);
-  }
+    // Botón Eliminar con lógica de repetición
+    btnEliminar.addEventListener("click", async () => {
+        const idEvento = btnEliminar.dataset.idEvento;
+        const esRepetitivo = (btnEliminar.dataset.esRepetitivo === 'true');
+        const fechaInstancia = btnEliminar.dataset.fechaInstancia;
+        let modoBorrado = 'serie'; // Por defecto borra todo
 
-  mostrarEventosEnCalendario();
-  actualizarListaTareas();
-}
+        // Si es repetitivo, preguntar qué borrar
+        if (esRepetitivo) {
+            if (confirm("Evento repetitivo. ¿Borrar SOLO esta fecha? [Aceptar = Solo hoy] [Cancelar = Toda la serie]")) {
+                modoBorrado = 'instancia';
+            } else if (confirm("¿Seguro que quieres borrar TODA la serie?")) {
+                modoBorrado = 'serie';
+            } else {
+                return; // Cancelar
+            }
+        } else {
+            // Si no es repetitivo, confirmación simple
+            if (!confirm("¿Borrar evento?")) return;
+        }
+        
+        try {
+            const response = await fetch(`${RUTA_API}?controlador=Evento&accion=eliminar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    id_evento: idEvento, 
+                    modo: modoBorrado, 
+                    fecha_instancia: fechaInstancia 
+                })
+            });
+            
+            if (response.ok) {
+                modal.classList.add("oculto");
+                generarCalendario(fechaActual.getMonth(), fechaActual.getFullYear());
+            } else {
+                const err = await response.json();
+                alert("Error: " + err.error);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    });
 
-// --- Navegación entre meses ---
-mesAnterior.addEventListener("click", () => {
-  fechaActual.setMonth(fechaActual.getMonth() - 1);
-  generarCalendario(fechaActual.getMonth(), fechaActual.getFullYear());
+    // --- NAVEGACIÓN ENTRE MESES ---
+
+    mesAnterior.addEventListener("click", () => {
+        fechaActual.setMonth(fechaActual.getMonth() - 1);
+        generarCalendario(fechaActual.getMonth(), fechaActual.getFullYear());
+    });
+
+    mesSiguiente.addEventListener("click", () => {
+        fechaActual.setMonth(fechaActual.getMonth() + 1);
+        generarCalendario(fechaActual.getMonth(), fechaActual.getFullYear());
+    });
 });
-
-mesSiguiente.addEventListener("click", () => {
-  fechaActual.setMonth(fechaActual.getMonth() + 1);
-  generarCalendario(fechaActual.getMonth(), fechaActual.getFullYear());
-});
-
-// --- Mover evento de fecha ---
-function moverEvento(titulo, nuevoDia, nuevoMes, nuevoAño) {
-  const evento = eventos.find((ev) => ev.titulo === titulo);
-  if (evento) {
-    const nuevaFecha = new Date(nuevoAño, nuevoMes, nuevoDia);
-    evento.inicio = nuevaFecha.toISOString();
-    localStorage.setItem("eventos", JSON.stringify(eventos));
-    generarCalendario(fechaActual.getMonth(), fechaActual.getFullYear());
-    actualizarListaTareas();
-  }
-}
-
-// --- Lista de tareas (pendientes, en proceso, completadas) ---
-function actualizarListaTareas() {
-  const lista = document.getElementById("lista-tareas");
-  if (!lista) return; // por si no existe en la página
-  lista.innerHTML = "";
-  eventos.forEach((evento) => {
-    const li = document.createElement("li");
-    li.textContent = `${evento.titulo} (${evento.repeticion})`;
-    lista.appendChild(li);
-  });
-}
-
-// Inicializar
-generarCalendario(fechaActual.getMonth(), fechaActual.getFullYear());
-actualizarListaTareas();

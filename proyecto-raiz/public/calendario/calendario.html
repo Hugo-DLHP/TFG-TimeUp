@@ -6,118 +6,97 @@
   <title>Calendario | TimeUp</title>
   <link rel="icon" href="../recursos/iconos/favicoTimeUp.ico" type="image/x-icon">
   <link rel="stylesheet" href="../css/styles1.css">
-  <link rel="stylesheet" href="../css/calendario.css">
+  <link rel="stylesheet" href="../css/calendario.css?v=4">
 </head>
 
 <body>
-  <!-- ENCABEZADO GLOBAL -->
   <header class="encabezado">
     <img src="../recursos/logoTimeUp.png" alt="Logo de TimeUp" class="logo-calendario" id="logo-timeup">
     <h1 class="nombre-aplicacion">TimeUp</h1>
 
-    <!-- MENÚ DE NAVEGACIÓN -->
     <nav class="barra-navegacion">
       <ul class="menu-principal">
         <li><a href="../index.html"><span class="icono">🏠</span> Inicio</a></li>
         <li><a href="./calendario.html" class="activo"><span class="icono">📅</span> Calendario</a></li>
         <li><a href="./eventos.html"><span class="icono">🗓️</span> Eventos</a></li>
+        <li><a href="./tareas.html"><span class="icono">✅</span> Tareas</a></li>
         <li><a href="../usuario/usuario.html"><span class="icono">👤</span> Perfil</a></li>
-        <li><a href="#"><span class="icono">❓</span> Ayuda</a></li>
-
-        <!-- BOTÓN DE TEMA -->
-        <button id="boton-tema" class="boton-tema" aria-label="Cambiar tema">
-          🌙 Modo oscuro
-        </button>
+        <li><a href="../grupo/grupo.html"><span class="icono">👥</span> Grupos</a></li>
       </ul>
     </nav>
   </header>
 
   <main class="contenido-principal">
-    <!-- NAV DEL CALENDARIO -->
     <div class="barra-calendario">
       <button id="mes-anterior">⬅️</button>
       <h2 id="nombre-mes"></h2>
       <button id="mes-siguiente">➡️</button>
     </div>
 
-    <!-- CALENDARIO PRINCIPAL -->
     <div id="calendario" class="calendario-grid"></div>
 
-    <!-- MODAL DE EVENTOS -->
     <div id="modal-evento" class="modal oculto">
       <div class="modal-contenido">
-        <h3>Nuevo evento</h3>
+        <h3 id="titulo-modal">Nuevo evento</h3>
+        
         <form id="form-evento">
-          <label for="titulo">Título:</label>
-          <input type="text" id="titulo" placeholder="Título del evento" required>
+          <input type="hidden" id="evento-id">
 
-          <label for="descripcion">Descripción:</label>
-          <textarea id="descripcion" placeholder="Descripción"></textarea>
+          <div class="form-group">
+              <label for="grupo-evento">Grupo / Calendario:</label>
+              <select id="grupo-evento" required>
+                 <option value="">Cargando grupos...</option>
+              </select>
+          </div>
 
-          <label for="inicio">Inicio:</label>
-          <input type="datetime-local" id="inicio" required>
+          <div class="form-group">
+              <label for="titulo">Título:</label>
+              <input type="text" id="titulo" placeholder="Título del evento" required>
+          </div>
 
-          <label for="fin">Fin:</label>
-          <input type="datetime-local" id="fin" required>
+          <div class="form-group">
+              <label for="descripcion">Descripción:</label>
+              <textarea id="descripcion" placeholder="Descripción" rows="3"></textarea>
+          </div>
 
-          <label for="lugar">Lugar:</label>
-          <input type="text" id="lugar" placeholder="Lugar">
+          <div class="form-row">
+              <div class="form-group half">
+                  <label for="inicio">Inicio:</label>
+                  <input type="datetime-local" id="inicio" required>
+              </div>
+              <div class="form-group half">
+                  <label for="fin">Fin:</label>
+                  <input type="datetime-local" id="fin" required>
+              </div>
+          </div>
 
-          <label for="participantes">Participantes:</label>
-          <input type="text" id="participantes" placeholder="Participantes (separados por comas)">
-
-          <label for="repeticion">Repetición:</label>
-          <select id="repeticion">
-            <option value="no">No repetir</option>
-            <option value="diario">Diario</option>
-            <option value="semanal">Semanal</option>
-            <option value="mensual">Mensual</option>
-          </select>
+          <div class="form-group">
+              <label for="lugar">Lugar:</label>
+              <input type="text" id="lugar" placeholder="Lugar">
+          </div>
+          
+          <div class="form-group">
+              <label for="repeticion">Repetición:</label>
+              <select id="repeticion">
+                <option value="ninguno">No repetir</option>
+                <option value="diario">Diario</option>
+                <option value="semanal">Semanal</option>
+                <option value="mensual">Mensual</option>
+              </select>
+          </div>
 
           <div class="botones-formulario">
-            <button type="submit">Guardar evento</button>
-            <button type="button" id="cerrar-modal">Cancelar</button>
+            <button type="submit" id="btn-guardar" class="btn-primary">Guardar evento</button>
+            <button type="button" id="btn-eliminar" class="btn-danger" style="display:none;">Eliminar</button>
+            <button type="button" id="cerrar-modal" class="btn-secondary">Cancelar</button>
           </div>
         </form>
       </div>
     </div>
-
-    <!-- LISTA DE TAREAS -->
-    <section class="lista-tareas">
-      <h2>Lista de tareas</h2>
-
-      <div class="nueva-tarea">
-        <input type="text" id="nueva-tarea-titulo" placeholder="Nueva tarea...">
-        <select id="estado-tarea">
-          <option value="pendiente">Pendiente</option>
-          <option value="proceso">En proceso</option>
-          <option value="completada">Completada</option>
-        </select>
-        <button id="agregar-tarea">➕ Agregar</button>
-      </div>
-
-      <div class="contenedor-tareas">
-        <div class="columna-tareas" id="tareas-pendientes">
-          <h3>🕒 Pendientes</h3>
-          <ul></ul>
-        </div>
-        <div class="columna-tareas" id="tareas-proceso">
-          <h3>⚙️ En proceso</h3>
-          <ul></ul>
-        </div>
-        <div class="columna-tareas" id="tareas-completadas">
-          <h3>✅ Completadas</h3>
-          <ul></ul>
-        </div>
-      </div>
-    </section>
   </main>
-
   <footer class="pie-pagina">
     <p>© 2025 TimeUp. Todos los derechos reservados.</p>
   </footer>
-
-  <script src="../js/tema.js"></script>
   <script src="../js/calendario.js"></script>
 </body>
 </html>

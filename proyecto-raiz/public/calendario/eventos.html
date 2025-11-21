@@ -4,29 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Eventos | TimeUp</title>
-  <link rel="icon" href="../recursos/iconos/favicoTimeUp.ico" type="image/x-icon">
   <link rel="stylesheet" href="../css/styles1.css">
-  <link rel="stylesheet" href="../css/eventos.css">
+  <link rel="stylesheet" href="../css/eventos.css?v=2">
 </head>
 <body>
   <header class="encabezado">
     <img src="../recursos/logoTimeUp.png" alt="Logo de TimeUp" class="logo-calendario">
-    <h1>Mis eventos</h1>
-    <button id="volver-calendario" class="boton-volver">⬅️ Volver al calendario</button>
+    <h1>Lista de Eventos</h1>
+    <button id="volver-calendario" class="boton-volver" onclick="window.location.href='calendario.html'">⬅️ Volver</button>
   </header>
 
   <main class="contenido-principal">
     <section class="panel-eventos">
-      <h2>Eventos guardados</h2>
+      <h2>Próximos Eventos</h2>
       <ul id="lista-eventos">
-
+          <li style="text-align:center; padding:20px;">Cargando...</li>
       </ul>
     </section>
   </main>
-
-  <footer class="pie-pagina">
-    <p>© 2025 TimeUp</p>
-  </footer>
 
   <script src="../js/eventos.js"></script>
 </body>

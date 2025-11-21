@@ -14,6 +14,7 @@ INSERT INTO usuarios (id_usuario, nombre, correo, contrasena, foto, fecha_creaci
 (8,  'Pablo Serrano',   'pablo.serrano@example.com',  '$2y$10$Zh00Lm/5k8GSaHs7ocICCuG1s1iClhTtmwU53/q16iMfLkc6Lqq9e',  NULL, '2025-07-15 09:09:00'),
 (9,  'Marina Ortega',   'marina.ortega@example.com',  '$2y$10$Zh00Lm/5k8GSaHs7ocICCuG1s1iClhTtmwU53/q16iMfLkc6Lqq9e',  NULL, '2025-08-22 18:30:00'),
 (10, 'Andrés Vega',     'andres.vega@example.com',    '$2y$10$Zh00Lm/5k8GSaHs7ocICCuG1s1iClhTtmwU53/q16iMfLkc6Lqq9e',  NULL, '2025-09-05 07:50:00');
+
 -- ===========================
 -- INSERT: Grupos
 -- ===========================
@@ -37,11 +38,11 @@ INSERT INTO usuarios_grupos (id_usuario, id_grupo, rol_en_grupo) VALUES
 (10,2, 'miembro');
 
 -- ===========================
--- INSERT: Calendarios 
+-- INSERT: Calendarios (MODIFICADO: Se añade color)
 -- ===========================
-INSERT INTO calendarios (id_calendario, id_grupo, nombre, fecha_creacion) VALUES
-(1, 1, 'Calendario Alpha', '2025-01-11 08:00:00'),
-(2, 2, 'Calendario Beta',  '2025-06-06 08:30:00');
+INSERT INTO calendarios (id_calendario, id_grupo, nombre, color, fecha_creacion) VALUES
+(1, 1, 'Calendario Alpha', '#007bff', '2025-01-11 08:00:00'), -- Azul
+(2, 2, 'Calendario Beta',  '#28a745', '2025-06-06 08:30:00'); -- Verde
 
 -- ===========================
 -- INSERT: Eventos
@@ -63,6 +64,30 @@ INSERT INTO tareas (id_tarea, id_calendario, descripcion, estado, fecha_limite) 
 (6, 2, 'Reservar lab de QA y coordinar testers', 'pendiente', '2025-08-28'),
 (7, 2, 'Generar informe de fallos críticos', 'pendiente', '2025-09-03'),
 (8, 1, 'Diseñar mockups de la nueva pantalla de usuario', 'en_proceso', '2025-02-10');
+
+-- ===========================
+-- INSERT: Tareas Asignadas (NUEVO)
+-- ===========================
+INSERT INTO tareas_asignadas (id_tarea, id_usuario) VALUES
+-- Tareas del Grupo Alpha (Cal 1)
+(1, 2), -- 'Preparar agenda' asignada a Javier (Editor)
+(2, 3), -- 'Subir doc' asignada a Ana (Miembro)
+(3, 4), -- 'Configurar entorno' asignada a Carlos (Miembro)
+(4, 1), -- 'Feedback' asignada a María (Admin)
+(8, 5), -- 'Mockups' asignada a Lucía (Miembro)
+
+-- Tareas del Grupo Beta (Cal 2)
+(5, 6), -- 'Scripts test' asignada a Diego (Admin)
+(5, 7), -- 'Scripts test' TAMBIÉN asignada a Sofía (Miembro) - Tarea compartida
+(6, 7), -- 'Reservar lab' asignada a Sofía (Miembro)
+(7, 8); -- 'Informe fallos' asignada a Pablo (Miembro)
+
+-- ===========================
+-- INSERT: Invitaciones (NUEVO)
+-- ===========================
+INSERT INTO invitaciones (id_grupo, id_usuario_creador, token, fecha_expiracion, usos_maximos) VALUES
+(1, 1, 'ALPHA-2025', '2025-12-31 23:59:59', 10), -- Invitación al grupo Alpha
+(2, 6, 'BETA-TEST',  '2025-12-31 23:59:59', 5);  -- Invitación al grupo Beta
 
 -- ===========================
 -- FIN DEL SCRIPT

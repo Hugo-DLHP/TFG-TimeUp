@@ -33,10 +33,12 @@ class Grupo extends ModeloBase {
      */
     public static function findByUsuario(int $id_usuario): array {
         global $conexion;
-        $sql = "SELECT g.*, ug.rol_en_grupo 
+        $sql = "SELECT g.*, ug.rol_en_grupo, c.id_calendario 
                 FROM grupos g
                 JOIN usuarios_grupos ug ON g.id_grupo = ug.id_grupo
+                LEFT JOIN calendarios c ON g.id_grupo = c.id_grupo
                 WHERE ug.id_usuario = ?";
+        
         $stmt = $conexion->prepare($sql);
         $stmt->execute([$id_usuario]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

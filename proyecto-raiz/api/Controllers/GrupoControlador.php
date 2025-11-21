@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../Core/ControladorBase.php';
 require_once __DIR__ . '/../Models/Grupo.php';
 require_once __DIR__ . '/../Models/Invitacion.php';
+require_once __DIR__ . '/../Models/Calendario.php';
 
 class GrupoControlador extends ControladorBase {
 
@@ -16,7 +17,6 @@ class GrupoControlador extends ControladorBase {
      */
     public function crear() {
         $id_usuario_creador = $this->verificarAutenticacion();
-
         $datos = json_decode(file_get_contents('php://input'), true);
         $nombre = $datos['nombre'] ?? null;
         $descripcion = $datos['descripcion'] ?? null;
@@ -35,14 +35,29 @@ class GrupoControlador extends ControladorBase {
         try {
             $this->db->beginTransaction();
 
+            // Crear el Grupo
             $nuevoIdGrupo = $grupo->insert();
 
+            // Añadir al creador como administrador
             Grupo::anadirMiembro($id_usuario_creador, $nuevoIdGrupo, 'administrador');
+
+            // Crear Calendario por defecto para este grupo
+            // Generamos un color aleatorio o usamos el default
+            $colores = ['#007bff', '#28a745', '#dc3545', '#ffc107', '#17a2b8', '#6f42c1'];
+            $colorAleatorio = $colores[array_rand($colores)];
+
+            $calendario = new Calendario([
+                'id_grupo' => $nuevoIdGrupo,
+                'nombre' => 'General',
+                'color' => $colorAleatorio,
+                'fecha_creacion' => date('Y-m-d H:i:s')
+            ]);
+            $calendario->insert();
 
             $this->db->commit();
 
             $this->jsonResponse([
-                'mensaje' => 'Grupo creado con éxito.',
+                'mensaje' => 'Grupo y calendario creados con éxito.',
                 'id_grupo' => $nuevoIdGrupo
             ], 201);
 
