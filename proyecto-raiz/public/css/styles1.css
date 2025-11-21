@@ -1,37 +1,55 @@
+/* styles1.css */
+
+/* * RESET GLOBAL
+ * Elimina los márgenes y paddings por defecto de todos los navegadores.
+ * border-box asegura que el padding no aumente el ancho total de los elementos.
+ */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Fuente clara y colores suaves */
+/* * ESTILOS BASE DEL CUERPO
+ * Fuente clara y fondo con degradado suave vertical.
+ * Usa Flexbox 'column' y 'min-height: 100vh' para asegurar que el pie de página
+ * siempre se quede abajo aunque haya poco contenido (Sticky Footer).
+ */
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(180deg, #f9fafb, #e4ebf5);
-  color: #333;
+  font-family: 'Segoe UI', sans-serif; /* Tipografía moderna de sistema Windows */
+  background: linear-gradient(180deg, #f9fafb, #e4ebf5); /* Degradado sutil de blanco a azul muy claro */
+  color: #333; /* Texto gris oscuro */
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100vh; /* Ocupa al menos el 100% de la altura de la ventana */
 }
 
+/* * ENCABEZADO PRINCIPAL
+ * Centrado y espaciado.
+ */
 .encabezado {
   text-align: center;
   padding: 2rem 1rem;
 }
 
+/* Logo de la aplicación */
 .logo-calendario {
   width: 85px;
-  height: auto;
+  height: auto; /* Mantiene la proporción original */
 }
 
 .nombre-aplicacion {
   font-size: 2rem;
   margin-top: 0.5rem;
-  color: #1a202c;
+  color: #1a202c; /* Casi negro */
 }
 
+/* * CONTENIDO CENTRAL
+ * Usa 'flex: 1' para ocupar todo el espacio disponible entre el header y el footer.
+ * Centra todo el contenido vertical y horizontalmente.
+ */
 .contenido-principal {
-  flex: 1;
+  flex: 1; /* Empuja el footer hacia abajo */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -40,6 +58,7 @@ body {
   padding: 2rem 1rem;
 }
 
+/* Textos de presentación (Marketing) */
 .presentacion h2 {
   font-size: 1.7rem;
   margin-bottom: 0.6rem;
@@ -47,40 +66,42 @@ body {
 }
 
 .presentacion p {
-  max-width: 520px;
-  margin: 0 auto 2rem;
+  max-width: 520px; /* Evita líneas de texto demasiado largas e incómodas de leer */
+  margin: 0 auto 2rem; /* Centrado horizontal */
   color: #4a5568;
   line-height: 1.6;
 }
 
-/* Contenedor con los botones de acceso del usuario */
+/* * BOTONES DE ACCIÓN (Login / Registro)
+ * Contenedor flexible para los botones.
+ */
 .acciones-usuario {
   display: flex;
   gap: 1rem;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* Permite que los botones bajen de línea en móviles pequeños */
   justify-content: center;
 }
 
-/* Estilo base para todos los botones */
+/* Estilo base común para ambos botones */
 .boton {
   text-decoration: none;
   padding: 0.9rem 1.7rem;
   border-radius: 6px;
-  transition: all 0.2s ease;
+  transition: all 0.2s ease; /* Animación suave en hover */
   font-weight: 500;
 }
 
-/* Botón principal: iniciar sesión */
+/* Botón principal (Azul sólido) */
 .boton-principal {
   background-color: #2b6cb0;
   color: white;
 }
 
 .boton-principal:hover {
-  background-color: #2c5282;
+  background-color: #2c5282; /* Oscurece al pasar el mouse */
 }
 
-/* Botón secundario: registrarse */
+/* Botón secundario (Fondo claro con borde) */
 .boton-secundario {
   background-color: #edf2f7;
   color: #2b6cb0;
@@ -91,23 +112,27 @@ body {
   background-color: #e2e8f0;
 }
 
-/* Pie de página discreto y limpio */
+/* * PIE DE PÁGINA
+ * Estilo discreto y limpio.
+ */
 .pie-pagina {
   text-align: center;
   font-size: 0.9rem;
   color: #666;
   padding: 1rem 0;
   background: #f7fafc;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid #e2e8f0; /* Línea divisoria superior */
 }
 
-/* Estilos para formularios de acceso (inicio sesión y registro) */
+/* * FORMULARIOS DE ACCESO
+ * Tarjeta flotante con sombra para login y registro.
+ */
 .formulario-acceso {
   background: white;
   padding: 2rem 2.5rem;
   border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  max-width: 400px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1); /* Sombra suave y difusa */
+  max-width: 400px; /* Ancho máximo controlado */
   width: 100%;
   margin: 2rem auto;
   display: flex;
@@ -128,9 +153,10 @@ body {
   margin-bottom: 1rem;
 }
 
+/* Estructura interna del formulario */
 .formulario {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Elementos uno debajo de otro */
   gap: 1rem;
 }
 
@@ -139,6 +165,7 @@ body {
   color: #2d3748;
 }
 
+/* Estilos unificados para todos los inputs */
 .formulario input[type="text"],
 .formulario input[type="email"],
 .formulario input[type="password"],
@@ -151,11 +178,13 @@ body {
   transition: border 0.2s;
 }
 
+/* Estado focus: borde azul */
 .formulario input:focus {
   border-color: #2b6cb0;
   outline: none;
 }
 
+/* Botón de envío ancho completo */
 .formulario button.boton-principal {
   width: 100%;
   padding: 0.9rem;
@@ -163,6 +192,7 @@ body {
   margin-top: 0.5rem;
 }
 
+/* Enlace "¿No tienes cuenta?" */
 .enlace-alternativo {
   text-align: center;
   font-size: 0.9rem;
@@ -183,7 +213,7 @@ body {
 
 /* ===== BARRA DE NAVEGACIÓN SUPERIOR ===== */
 .barra-navegacion {
-  background-color: #2b6cb0;
+  background-color: #2b6cb0; /* Azul corporativo */
   color: white;
   padding: 0.8rem 1rem;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -197,12 +227,13 @@ body {
   flex-wrap: wrap;
 }
 
+/* Enlaces del menú */
 .menu-principal li a {
   color: white;
   text-decoration: none;
   font-weight: 500;
   display: flex;
-  align-items: center;
+  align-items: center; /* Alinea icono y texto */
   gap: 0.4rem;
   transition: background 0.2s, transform 0.2s;
   padding: 0.4rem 0.8rem;
@@ -211,29 +242,29 @@ body {
 
 .menu-principal li a:hover,
 .menu-principal li a:focus {
-  background-color: #2c5282;
-  transform: translateY(-2px);
+  background-color: #2c5282; /* Fondo más oscuro */
+  transform: translateY(-2px); /* Pequeña elevación */
 }
 
 .menu-principal .icono {
   font-size: 1.1rem;
 }
 
-/* Modo responsive */
+/* Modo responsive para menú */
 @media (max-width: 600px) {
   .menu-principal {
-    flex-direction: column;
+    flex-direction: column; /* Apila los enlaces verticalmente en móviles */
     align-items: center;
     gap: 1rem;
   }
 }
 
 
-/* ===== BOTÓN DE CAMBIO DE TEMA ===== */
+/* ===== BOTÓN DE CAMBIO DE TEMA (DARK MODE) ===== */
 .boton-tema {
-  position: absolute;
+  position: absolute; /* Se posiciona libremente */
   top: 1rem;
-  right: 1rem;
+  right: 1rem;        /* Esquina superior derecha */
   background-color: #edf2f7;
   color: #2b6cb0;
   border: 1px solid #cbd5e0;
@@ -250,17 +281,20 @@ body {
   outline: none;
 }
 
-/* ===== TEMA OSCURO MEJORADO ===== */
+/* ===== TEMA OSCURO MEJORADO ===== 
+ * Estos estilos solo se aplican si el body tiene la clase 'tema-oscuro'.
+ * Sobrescriben los colores claros por oscuros.
+ */
 body.tema-oscuro {
-  background: linear-gradient(180deg, #0f172a, #1e293b); /* fondo más oscuro */
-  color: #e2e8f0; /* texto claro y legible */
+  background: linear-gradient(180deg, #0f172a, #1e293b); /* Fondo azul noche profundo */
+  color: #e2e8f0; /* Texto casi blanco */
 }
 
-/* Formularios */
+/* Tarjeta de formulario en modo oscuro */
 body.tema-oscuro .formulario-acceso {
   background-color: #1e293b;
   color: #f1f5f9;
-  box-shadow: 0 8px 20px rgba(255,255,255,0.05);
+  box-shadow: 0 8px 20px rgba(255,255,255,0.05); /* Sombra blanca muy sutil */
 }
 
 body.tema-oscuro .formulario-acceso h2,
@@ -268,6 +302,7 @@ body.tema-oscuro .formulario-acceso label {
   color: #f1f5f9;
 }
 
+/* Inputs en modo oscuro: fondo gris, borde gris claro, texto blanco */
 body.tema-oscuro .formulario input[type="text"],
 body.tema-oscuro .formulario input[type="email"],
 body.tema-oscuro .formulario input[type="password"],
@@ -278,12 +313,12 @@ body.tema-oscuro .formulario input[type="file"] {
 }
 
 body.tema-oscuro .formulario input:focus {
-  border-color: #63b3ed;
+  border-color: #63b3ed; /* Azul claro al enfocar */
 }
 
-/* Botones */
+/* Ajuste de colores de botones en modo oscuro */
 body.tema-oscuro .boton-principal {
-  background-color: #4299e1;
+  background-color: #4299e1; /* Azul más brillante para contrastar con fondo oscuro */
   color: white;
 }
 
@@ -301,7 +336,7 @@ body.tema-oscuro .boton-secundario:hover {
   background-color: #64748b;
 }
 
-/* Navegación */
+/* Navegación modo oscuro */
 body.tema-oscuro .barra-navegacion {
   background-color: #1e3a8a;
   color: white;
@@ -317,7 +352,7 @@ body.tema-oscuro .menu-principal li a:focus {
   background-color: #2563eb;
 }
 
-/* Botón de tema */
+/* Botón de tema en modo oscuro */
 body.tema-oscuro .boton-tema {
   background-color: #334155;
   color: #e2e8f0;
@@ -328,14 +363,14 @@ body.tema-oscuro .boton-tema:hover {
   background-color: #475569;
 }
 
-/* Pie de página */
+/* Pie de página oscuro */
 body.tema-oscuro .pie-pagina {
   background-color: #1e293b;
   color: #cbd5e1;
   border-top: 1px solid #475569;
 }
 
-/* Encabezados y texto */
+/* Textos generales */
 body.tema-oscuro .presentacion h2,
 body.tema-oscuro .nombre-aplicacion {
   color: #f8fafc;
@@ -354,17 +389,15 @@ body.tema-oscuro .enlace-alternativo a:hover {
   text-decoration: underline;
 }
 
-/* Textos introductorios y mensajes */
 body.tema-oscuro .formulario-acceso .texto-intro {
   color: #cbd5e1; /* gris claro legible */
 }
 
-/* Etiquetas y placeholders dentro de los inputs */
+/* Placeholders legibles */
 body.tema-oscuro input::placeholder {
   color: #94a3b8; /* gris visible sobre fondo oscuro */
 }
 
-/* Color de texto de los botones */
 body.tema-oscuro .enlace-alternativo {
   color: #e2e8f0;
 }
@@ -373,20 +406,20 @@ body.tema-oscuro .enlace-alternativo a {
   color: #60a5fa; /* azul claro */
 }
 
-/* Cambiar color de foco en inputs */
+/* Foco brillante en inputs */
 body.tema-oscuro .formulario input:focus {
   border-color: #60a5fa;
   box-shadow: 0 0 4px #60a5fa;
 }
 
-/* Ajuste del color general de texto en los formularios */
+/* Ajuste final de legibilidad */
 body.tema-oscuro .formulario label,
 body.tema-oscuro .formulario input,
 body.tema-oscuro .formulario button {
   color: #f8fafc;
 }
 
-/* Fondo de inputs al pasar el ratón (ligeramente más claro) */
+/* Hover en inputs */
 body.tema-oscuro .formulario input:hover {
   background-color: #3b4252;
 }

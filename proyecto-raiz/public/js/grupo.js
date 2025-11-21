@@ -1,49 +1,51 @@
+// grupo.js
 // ===========================================================================
 // GESTIÓN DE GRUPOS - TimeUp 
 // ===========================================================================
 
 document.addEventListener('DOMContentLoaded', function() {
     // --- REFERENCIAS DEL DOM ---
+    // Botones y formularios de "Crear Grupo"
     const btnCrearGrupo = document.getElementById('btn-crear-grupo');
-    const btnCrearPrimerGrupo = document.getElementById('btn-crear-primer-grupo');
-    const formCrearGrupo = document.getElementById('form-crear-grupo');
-    const crearGrupoForm = document.getElementById('crear-grupo-form');
+    const btnCrearPrimerGrupo = document.getElementById('btn-crear-primer-grupo'); // Botón especial estado vacío
+    const formCrearGrupo = document.getElementById('form-crear-grupo'); // Contenedor
+    const crearGrupoForm = document.getElementById('crear-grupo-form'); // Formulario
     const btnCancelarCrear = document.getElementById('btn-cancelar-crear');
     
-    // [MODIFICADO O AÑADIDO POR HUGO]
-    // Referencias nuevas para formulario "Unirse"
+    // Botones y formularios de "Unirse a Grupo"
     const btnUnirseGrupo = document.getElementById('btn-unirse-grupo');
     const formUnirseGrupo = document.getElementById('form-unirse-grupo');
     const unirseGrupoForm = document.getElementById('unirse-grupo-form');
     const btnCancelarUnirse = document.getElementById('btn-cancelar-unirse');
     
-    const listaGrupos = document.getElementById('lista-grupos');
-    const sinGrupos = document.getElementById('sin-grupos');
+    // Áreas de visualización
+    const listaGrupos = document.getElementById('lista-grupos'); // Grid de tarjetas
+    const sinGrupos = document.getElementById('sin-grupos');     // Mensaje si está vacío
     const tituloPagina = document.getElementById('titulo-pagina-grupos');
     
+    // Modal de miembros (Lectura rápida)
     const modalMiembros = document.getElementById('modal-miembros');
     const listaMiembros = document.getElementById('lista-miembros');
     const tituloMiembros = document.getElementById('titulo-miembros');
     
-    // [MODIFICADO O AÑADIDO POR HUGO]
-    // Eliminadas referencias a modales de invitación (movidas a config)
-
+    // Estado local
     let grupos = [];
     const RUTA_API = 'http://localhost/TFG/proyecto-raiz/api/index.php';
 
     // --- INICIALIZACIÓN ---
     actualizarTituloPagina();
-    cargarGrupos();
+    cargarGrupos(); // Carga inicial de datos desde API
     
     // --- EVENT LISTENERS ---
 
-    // Botón "Crear Nuevo Grupo"
+    // Botón "Crear Nuevo Grupo" -> Muestra form crear, oculta form unirse
     btnCrearGrupo.addEventListener('click', () => {
-        formUnirseGrupo.style.display = 'none'; // [MODIFICADO O AÑADIDO POR HUGO]: Cierra el otro form
+        formUnirseGrupo.style.display = 'none'; 
         formCrearGrupo.style.display = 'block'; 
-        document.getElementById('nombre-grupo').focus();
+        document.getElementById('nombre-grupo').focus(); // Foco UX
     });
 
+    // Botón especial para el primer grupo (cuando la lista está vacía)
     if (btnCrearPrimerGrupo) {
         btnCrearPrimerGrupo.addEventListener('click', () => {
             formUnirseGrupo.style.display = 'none';
@@ -52,34 +54,29 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // [MODIFICADO O AÑADIDO POR HUGO]
-    // Listener para Botón "Unirse a Grupo"
+    // Botón "Unirse a Grupo" -> Muestra form unirse, oculta form crear
     btnUnirseGrupo.addEventListener('click', () => {
-        formCrearGrupo.style.display = 'none'; // Cierra el otro form
+        formCrearGrupo.style.display = 'none'; 
         formUnirseGrupo.style.display = 'block'; 
         document.getElementById('token-invitacion').focus();
     });
     
-    // Botones Cancelar
+    // Botones de cancelar -> Ocultan formularios y resetean inputs
     btnCancelarCrear.addEventListener('click', () => {
         formCrearGrupo.style.display = 'none';
         crearGrupoForm.reset();
     });
 
-    // [MODIFICADO O AÑADIDO POR HUGO]
-    // Listener cancelar unirse
     btnCancelarUnirse.addEventListener('click', () => {
         formUnirseGrupo.style.display = 'none';
         unirseGrupoForm.reset();
     });
     
-    // Envíos de formularios
+    // Envíos de formularios (Submit)
     crearGrupoForm.addEventListener('submit', crearGrupo);
-    // [MODIFICADO O AÑADIDO POR HUGO]
-    // Listener envío unirse
     unirseGrupoForm.addEventListener('submit', unirseGrupo);
     
-    // Cerrar Modal de Miembros
+    // Lógica de cierre de modales (botón X y click fuera)
     document.querySelectorAll('.cerrar-modal').forEach(btn => {
         btn.addEventListener('click', function() {
             modalMiembros.style.display = 'none';
@@ -95,8 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- FUNCIONES LÓGICAS ---
 
-    // [MODIFICADO O AÑADIDO POR HUGO]
-    // Función real para personalizar título
+    // Personaliza el H1 con el nombre del usuario
     function actualizarTituloPagina() {
         try {
             const usuario = JSON.parse(localStorage.getItem('usuario'));
@@ -108,8 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // [MODIFICADO O AÑADIDO POR HUGO]
-    // Llamada real a API 'misGrupos'
+    // Carga la lista de grupos desde la API
     async function cargarGrupos() {
         try {
             const response = await fetch(`${RUTA_API}?controlador=Grupo&accion=misGrupos`);
@@ -120,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             grupos = await response.json();
-            mostrarGrupos();
+            mostrarGrupos(); // Pinta la interfaz
 
         } catch (error) {
             console.error('Error cargando grupos:', error.message);
@@ -128,27 +123,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // [MODIFICADO O AÑADIDO POR HUGO]
-    // Función mostrarGrupos actualizada
+    // Renderiza las tarjetas de grupo en el DOM
     function mostrarGrupos() {
+        // Estado vacío
         if (grupos.length === 0) {
             listaGrupos.style.display = 'none';
             sinGrupos.style.display = 'block';
             return;
         }
         
+        // Estado con datos
         listaGrupos.style.display = 'grid';
         sinGrupos.style.display = 'none';
         
-        listaGrupos.innerHTML = '';
+        listaGrupos.innerHTML = ''; // Limpia contenido anterior
         
         grupos.forEach(grupo => {
             const esAdmin = grupo.rol_en_grupo === 'administrador';
             const grupoCard = document.createElement('div');
             grupoCard.className = 'grupo-card';
             
-            // [MODIFICADO O AÑADIDO POR HUGO]
-            // Si es Admin muestra "Configurar grupo" en lugar de "Invitar"
+            // Lógica condicional: Si es Admin muestra botón "Configurar", si no, solo ver
+            // La redirección a 'configuracion.html' se hace mediante data-attributes.
             grupoCard.innerHTML = `
                 <h3>${grupo.nombre}</h3>
                 <p class="grupo-descripcion">${grupo.descripcion || 'Sin descripción'}</p>
@@ -167,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
             listaGrupos.appendChild(grupoCard);
         });
         
-        // Listeners dinámicos
+        // Asignar listeners dinámicos a los botones recién creados
         document.querySelectorAll('.btn-ver-miembros').forEach(btn => {
             btn.addEventListener('click', function() {
                 const grupoId = parseInt(this.getAttribute('data-grupo-id'));
@@ -175,8 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        // [MODIFICADO O AÑADIDO POR HUGO]
-        // Redirección a pagina de configuración
+        // Redirección a la página de configuración avanzada
         document.querySelectorAll('.btn-configurar').forEach(btn => {
             btn.addEventListener('click', function() {
                 const grupoId = this.getAttribute('data-grupo-id');
@@ -185,8 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // [MODIFICADO O AÑADIDO POR HUGO]
-    // Llamada real API crear
+    // Acción: Crear Grupo
     async function crearGrupo(event) {
         event.preventDefault();
         const nombre = document.getElementById('nombre-grupo').value.trim();
@@ -207,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (!response.ok) throw new Error(data.error);
 
-            cargarGrupos();
+            cargarGrupos(); // Recarga la lista para ver el nuevo grupo
             formCrearGrupo.style.display = 'none'; 
             crearGrupoForm.reset(); 
             mostrarMensaje('Grupo creado exitosamente', 'exito');
@@ -217,8 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // [MODIFICADO O AÑADIDO POR HUGO]
-    // Nueva función llamada API 'unirsePorCodigo'
+    // Acción: Unirse a Grupo por Código
     async function unirseGrupo(event) {
         event.preventDefault();
         const token = document.getElementById('token-invitacion').value.trim();
@@ -238,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (!response.ok) throw new Error(data.error);
 
-            cargarGrupos();
+            cargarGrupos(); // Recarga la lista
             formUnirseGrupo.style.display = 'none';
             unirseGrupoForm.reset(); 
             mostrarMensaje('¡Te has unido al grupo con éxito!', 'exito');
@@ -248,8 +241,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // [MODIFICADO O AÑADIDO POR HUGO]
-    // Llamada real API 'obtenerMiembros'
+    // Acción: Ver Miembros (Modal de lectura)
     async function mostrarMiembros(grupoId) {
         const grupo = grupos.find(g => g.id_grupo == grupoId); 
         if (!grupo) return;
@@ -269,7 +261,8 @@ document.addEventListener('DOMContentLoaded', function() {
             miembros.forEach(miembro => {
                 const miembroItem = document.createElement('div');
                 miembroItem.className = 'miembro-item';
-                // Ruta relativa corregida
+                
+                // Ruta relativa para la foto
                 const fotoSrc = miembro.foto ? `../${miembro.foto}` : '../recursos/default-avatar.png';
 
                 miembroItem.innerHTML = `
@@ -288,6 +281,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // Utilidad Toast
     function mostrarMensaje(mensaje, tipo) {
         const mensajesAnteriores = document.querySelectorAll('.mensaje');
         mensajesAnteriores.forEach(msg => msg.remove());

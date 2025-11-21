@@ -1,61 +1,80 @@
 -- =====================================================
 --  BASE DE DATOS: TimeUp
 -- =====================================================
-DROP DATABASE IF EXISTS TimeUp; -- ¡CUIDADO! Borra la BD anterior
+
+-- Si la base de datos ya existe, la borra por completo. 
+-- Útil en desarrollo para reiniciar todo desde cero, PELIGROSO en producción.
+DROP DATABASE IF EXISTS TimeUp; 
+
+-- Crea la base de datos con soporte para caracteres especiales (tildes, emojis).
 CREATE DATABASE TimeUp
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_general_ci;
 
+-- Selecciona la base de datos para empezar a crear tablas dentro de ella.
 USE TimeUp;
 
 -- =====================================================
---  1. TABLA: Usuarios 
+--  TABLA: Usuarios 
+--  Almacena la información de perfil y acceso.
 -- =====================================================
 CREATE TABLE usuarios (
-    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    correo VARCHAR(150) NOT NULL UNIQUE,
-    contrasena VARCHAR(255) NOT NULL,
-    foto VARCHAR(255),
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY, -- ID único autogenerado (1, 2, 3...)
+    nombre VARCHAR(100) NOT NULL,              -- Nombre visible
+    correo VARCHAR(150) NOT NULL UNIQUE,       -- Correo único (no puede haber dos iguales)
+    contrasena VARCHAR(255) NOT NULL,          -- Hash de la contraseña (nunca texto plano)
+    foto VARCHAR(255),                         -- Ruta relativa al archivo de imagen
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Se llena solo al insertar
 );
 
 -- =====================================================
---  2. TABLA: Grupos 
+--  TABLA: Grupos 
+--  Espacios de trabajo compartidos.
 -- =====================================================
 CREATE TABLE grupos (
     id_grupo INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
-    descripcion TEXT,
+    descripcion TEXT,                          -- Texto largo opcional
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- =====================================================
---  3. TABLA INTERMEDIA: Usuarios_Grupos 
+--  TABLA INTERMEDIA: Usuarios_Grupos 
+--  Relación "Muchos a Muchos" (N:M). Un usuario puede estar en varios grupos
+--  y un grupo tiene varios usuarios. Define también el ROL.
 -- =====================================================
 CREATE TABLE usuarios_grupos (
     id_usuario INT NOT NULL,
     id_grupo INT NOT NULL,
+    -- Enum limita los valores posibles a esta lista cerrada.
     rol_en_grupo ENUM('administrador', 'editor', 'miembro') DEFAULT 'miembro',
+    
+    -- Llave primaria compuesta: Un usuario no puede estar dos veces en el mismo grupo.
     PRIMARY KEY (id_usuario, id_grupo),
+    
+    -- Claves Foráneas (Foreign Keys):
+    -- ON DELETE CASCADE: Si borras al usuario, se borra su membresía aquí automáticamente.
+    -- ON UPDATE CASCADE: Si cambia el ID del usuario, se actualiza aquí.
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (id_grupo) REFERENCES grupos(id_grupo) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- =====================================================
---  4. TABLA: Calendarios
+--  TABLA: Calendarios
+--  Un grupo puede tener varios calendarios (General, Marketing, etc.).
 -- =====================================================
 CREATE TABLE calendarios (
     id_calendario INT AUTO_INCREMENT PRIMARY KEY,
-    id_grupo INT NOT NULL,
+    id_grupo INT NOT NULL,                     -- Pertenece a un grupo
     nombre VARCHAR(100) NOT NULL,
-    color VARCHAR(7) DEFAULT '#3788d8', -- Color HEX para el frontend
+    color VARCHAR(7) DEFAULT '#3788d8',        -- Guarda el color hexadecimal para pintar eventos en el frontend
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_grupo) REFERENCES grupos(id_grupo) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- =====================================================
---  5. TABLA: Eventos
+--  TABLA: Eventos
+--  Citas en el calendario. Soporta repetición básica.
 -- =====================================================
 CREATE TABLE eventos (
     id_evento INT AUTO_INCREMENT PRIMARY KEY,
@@ -64,24 +83,28 @@ CREATE TABLE eventos (
     descripcion TEXT,
     fecha_inicio DATETIME NOT NULL,
     fecha_fin DATETIME NOT NULL,
+    -- Controla si el evento se repite en el tiempo.
     repeticion ENUM('ninguno', 'diario', 'semanal', 'mensual', 'anual') DEFAULT 'ninguno',
     ubicacion VARCHAR(150),
     FOREIGN KEY (id_calendario) REFERENCES calendarios(id_calendario) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- =====================================================
---  6. TABLA: Excepciones de Eventos (NUEVA)
---  Guarda los días borrados de una serie repetitiva
+--  TABLA: Excepciones de Eventos
+--  CRÍTICO PARA RECURRENCIA: Si tienes una reunión "todos los lunes", 
+--  pero cancelas el "lunes 15", guardamos el "lunes 15" aquí para que el sistema sepa
+--  que ese día NO debe pintar el evento, aunque la regla de repetición diga que sí.
 -- =====================================================
 CREATE TABLE eventos_excepciones (
     id_excepcion INT AUTO_INCREMENT PRIMARY KEY,
-    id_evento INT NOT NULL,
-    fecha_excepcion DATE NOT NULL, -- El día concreto a ocultar
+    id_evento INT NOT NULL,          -- El evento padre que se repite
+    fecha_excepcion DATE NOT NULL,   -- La fecha específica que se ha eliminado
     FOREIGN KEY (id_evento) REFERENCES eventos(id_evento) ON DELETE CASCADE
 );
 
 -- =====================================================
---  7. TABLA: Tareas
+--  TABLA: Tareas
+--  Items tipo "To-Do list" asociados a un calendario.
 -- =====================================================
 CREATE TABLE tareas (
     id_tarea INT AUTO_INCREMENT PRIMARY KEY,
@@ -93,28 +116,30 @@ CREATE TABLE tareas (
 );
 
 -- =====================================================
---  8. TABLA: Tareas Asignadas
+--  TABLA: Tareas Asignadas
+--  Relación N:M. Una tarea puede ser realizada por varias personas.
 -- =====================================================
 CREATE TABLE tareas_asignadas (
     id_tarea INT NOT NULL,
     id_usuario INT NOT NULL,
-    PRIMARY KEY (id_tarea, id_usuario),
+    PRIMARY KEY (id_tarea, id_usuario), -- Evita asignar la misma tarea dos veces al mismo usuario
     FOREIGN KEY (id_tarea) REFERENCES tareas(id_tarea) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- =====================================================
---  9. TABLA: Invitaciones
+--  TABLA: Invitaciones
+--  Sistema de tokens para unirse a grupos sin ser agregado manualmente.
 -- =====================================================
 CREATE TABLE invitaciones (
     id_invitacion INT AUTO_INCREMENT PRIMARY KEY,
-    id_grupo INT NOT NULL,
-    id_usuario_creador INT NOT NULL,
-    token VARCHAR(20) NOT NULL UNIQUE,
+    id_grupo INT NOT NULL,                -- A qué grupo da acceso
+    id_usuario_creador INT NOT NULL,      -- Quién generó el link (auditoría)
+    token VARCHAR(20) NOT NULL UNIQUE,    -- El código secreto (ej: A8F2D)
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fecha_expiracion DATETIME,
-    usos_maximos INT DEFAULT 1,
-    usos_actuales INT DEFAULT 0,
+    fecha_expiracion DATETIME,            -- Cuándo deja de servir
+    usos_maximos INT DEFAULT 1,           -- Cuánta gente puede entrar con este link
+    usos_actuales INT DEFAULT 0,          -- Contador de usos
     FOREIGN KEY (id_grupo) REFERENCES grupos(id_grupo) ON DELETE CASCADE,
     FOREIGN KEY (id_usuario_creador) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
 );

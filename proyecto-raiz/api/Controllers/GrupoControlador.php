@@ -13,7 +13,7 @@ class GrupoControlador extends ControladorBase {
 
     /**
      * Crea un nuevo grupo.
-     * El usuario que lo crea se convierte en administrador.
+     * Transacción: Crea Grupo -> Añade Admin -> Crea Calendario Default.
      */
     public function crear() {
         $id_usuario_creador = $this->verificarAutenticacion();
@@ -33,16 +33,16 @@ class GrupoControlador extends ControladorBase {
         ]);
 
         try {
+            // INICIO TRANSACCIÓN: Asegura atomicidad.
             $this->db->beginTransaction();
 
-            // Crear el Grupo
+            // Inserta el grupo.
             $nuevoIdGrupo = $grupo->insert();
 
-            // Añadir al creador como administrador
+            // Añade al creador como 'administrador'.
             Grupo::anadirMiembro($id_usuario_creador, $nuevoIdGrupo, 'administrador');
 
-            // Crear Calendario por defecto para este grupo
-            // Generamos un color aleatorio o usamos el default
+            // Crea un calendario por defecto para el grupo.
             $colores = ['#007bff', '#28a745', '#dc3545', '#ffc107', '#17a2b8', '#6f42c1'];
             $colorAleatorio = $colores[array_rand($colores)];
 
@@ -54,6 +54,7 @@ class GrupoControlador extends ControladorBase {
             ]);
             $calendario->insert();
 
+            // CONFIRMAR TRANSACCIÓN: Guarda todo permanentemente.
             $this->db->commit();
 
             $this->jsonResponse([
@@ -62,13 +63,14 @@ class GrupoControlador extends ControladorBase {
             ], 201);
 
         } catch (\Exception $e) {
+            // REVERTIR TRANSACCIÓN: Deshace cambios si algo falló.
             $this->db->rollBack();
             $this->jsonResponse(['error' => 'Error al crear el grupo: ' . $e->getMessage()], 500);
         }
     }
 
     /**
-     * Devuelve todos los grupos a los que pertenece el usuario logueado.
+     * Devuelve la lista de grupos a los que pertenece el usuario.
      */
     public function misGrupos() {
         $id_usuario = $this->verificarAutenticacion();
@@ -81,7 +83,9 @@ class GrupoControlador extends ControladorBase {
         }
     }
 
-
+    /**
+     * Permite a un usuario unirse a un grupo usando un token de invitación.
+     */
     public function unirsePorCodigo() {
         
         $id_usuario = $this->verificarAutenticacion(); 
@@ -95,6 +99,7 @@ class GrupoControlador extends ControladorBase {
         }
 
         try {
+            // Valida si el token existe y no ha expirado.
             $invitacion = Invitacion::buscarYValidarToken($token_invitacion);
             if (!$invitacion) {
                 throw new Exception('Código de invitación no encontrado.', 404);
@@ -104,14 +109,17 @@ class GrupoControlador extends ControladorBase {
 
             $this->db->beginTransaction();
 
+            // Verifica si ya es miembro (para evitar errores de clave duplicada).
             if (Grupo::esMiembro($id_usuario, $id_grupo_a_unir)) {
                 $this->db->rollBack();
                 $this->jsonResponse(['error' => 'Ya eres miembro de este grupo.'], 409);
                 return;
             }
 
+            // Añade al usuario con rol básico 'miembro'.
             Grupo::anadirMiembro($id_usuario, $id_grupo_a_unir, 'miembro');
 
+            // Incrementa contador de uso de la invitación.
             Invitacion::incrementarUso($invitacion['id_invitacion']);
             
             $this->db->commit();
@@ -128,10 +136,12 @@ class GrupoControlador extends ControladorBase {
         }
     }
 
+    /**
+     * Obtiene los miembros de un grupo específico.
+     */
     public function obtenerMiembros()
     {
         try {
-            // Verificar que el usuario está logueado
             $id_usuario = $this->verificarAutenticacion();
             $id_grupo = $_GET['id_grupo'] ?? null;
 
@@ -139,12 +149,11 @@ class GrupoControlador extends ControladorBase {
                 return $this->jsonResponse(['error' => 'ID de grupo no proporcionado.'], 400);
             }
 
-            // Seguridad: Verificar que el usuario es miembro de ese grupo
+            // Seguridad: Solo los miembros pueden ver quién más está en el grupo.
             if (!Grupo::esMiembro($id_usuario, $id_grupo)) {
                 return $this->jsonResponse(['error' => 'No tienes permiso para ver este grupo.'], 403);
             }
 
-            // Obtener los miembros (requiere nuevo método en el Modelo)
             $miembros = Grupo::getMiembros($id_grupo);
             
             $this->jsonResponse($miembros, 200);
@@ -154,13 +163,13 @@ class GrupoControlador extends ControladorBase {
         }
     }
 
+    /**
+     * Elimina un grupo completamente.
+     */
     public function eliminar()
     {
         try {
-            // Verificar autenticación
             $id_usuario = $this->verificarAutenticacion();
-
-            // Obtener el id_grupo del cuerpo JSON
             $datos = json_decode(file_get_contents('php://input'), true);
             $id_grupo = $datos['id_grupo'] ?? null;
 
@@ -168,14 +177,13 @@ class GrupoControlador extends ControladorBase {
                 return $this->jsonResponse(['error' => 'ID de grupo no proporcionado.'], 400);
             }
 
-            // Comprobar que el usuario es administrador de ESE grupo
+            // Seguridad: Solo el administrador del grupo puede borrarlo.
             $rol = Grupo::getRolEnGrupo($id_usuario, $id_grupo);
-            
             if ($rol !== 'administrador') {
-                return $this->jsonResponse(['error' => 'No tienes permisos para eliminar este grupo.'], 403); // 403 Forbidden
+                return $this->jsonResponse(['error' => 'No tienes permisos para eliminar este grupo.'], 403);
             }
 
-            // Eliminar el grupo
+            // Ejecuta el borrado.
             if (Grupo::deleteById($id_grupo)) {
                 $this->jsonResponse(['mensaje' => 'Grupo eliminado correctamente.'], 200);
             } else {
@@ -188,8 +196,7 @@ class GrupoControlador extends ControladorBase {
     }
 
     /**
-     * Obtiene la info de un grupo Y su lista de miembros.
-     * Solo para administradores.
+     * Obtiene info detallada y miembros (Solo Admins).
      */
     public function obtenerDetallesGrupo()
     {
@@ -201,7 +208,7 @@ class GrupoControlador extends ControladorBase {
                 return $this->jsonResponse(['error' => 'ID de grupo no proporcionado.'], 400);
             }
 
-            // Solo los admins pueden ver esta página
+            // Validación estricta de rol.
             $rol = Grupo::getRolEnGrupo($id_usuario, $id_grupo);
             if ($rol !== 'administrador') {
                 return $this->jsonResponse(['error' => 'Acceso denegado. Se requiere ser administrador.'], 403);
@@ -218,7 +225,7 @@ class GrupoControlador extends ControladorBase {
     }
 
     /**
-     * Actualiza el nombre y descripción de un grupo.
+     * Actualiza metadatos del grupo (nombre, descripción).
      */
     public function actualizar()
     {
@@ -233,13 +240,13 @@ class GrupoControlador extends ControladorBase {
                 return $this->jsonResponse(['error' => 'Faltan datos (id_grupo, nombre).'], 400);
             }
 
-            // Solo admins
+            // Solo administradores.
             $rol = Grupo::getRolEnGrupo($id_usuario, $id_grupo);
             if ($rol !== 'administrador') {
                 return $this->jsonResponse(['error' => 'Acceso denegado.'], 403);
             }
 
-            // ModeloBase se encarga del update
+            // Usa ModeloBase para actualizar.
             $grupo = new Grupo([
                 'id_grupo' => $id_grupo,
                 'nombre' => $nombre,
@@ -255,7 +262,7 @@ class GrupoControlador extends ControladorBase {
     }
 
     /**
-     * Cambia el rol de un miembro (ascender/degradar).
+     * Cambia el rol de un miembro (ej: ascender a editor).
      */
     public function cambiarRol()
     {
@@ -271,16 +278,17 @@ class GrupoControlador extends ControladorBase {
                 return $this->jsonResponse(['error' => 'Faltan datos.'], 400);
             }
 
+            // Verifica que quien solicita sea Admin.
             if (Grupo::getRolEnGrupo($id_admin, $id_grupo) !== 'administrador') {
                 return $this->jsonResponse(['error' => 'Acceso denegado. Solo administradores.'], 403);
             }
 
-            // No puedes cambiar tu propio rol
+            // Validación lógica: No puedes cambiar tu propio rol (podrías quedarte sin admin).
             if ($id_admin == $id_usuario_objetivo) {
                  return $this->jsonResponse(['error' => 'No puedes cambiar tu propio rol.'], 400);
             }
             
-            // Rol válido
+            // Valida que el rol enviado sea correcto.
             if (!in_array($nuevo_rol, ['administrador', 'editor', 'miembro'])) {
                  return $this->jsonResponse(['error' => 'Rol no válido.'], 400);
             }
@@ -295,7 +303,7 @@ class GrupoControlador extends ControladorBase {
     }
 
     /**
-     * Expulsa a un miembro de un grupo.
+     * Elimina a un usuario del grupo (Kick).
      */
     public function expulsarMiembro()
     {
@@ -310,12 +318,12 @@ class GrupoControlador extends ControladorBase {
                 return $this->jsonResponse(['error' => 'Faltan datos.'], 400);
             }
 
-            // Solo admins pueden expulsar
+            // Solo administradores.
             if (Grupo::getRolEnGrupo($id_admin, $id_grupo) !== 'administrador') {
                 return $this->jsonResponse(['error' => 'Acceso denegado.'], 403);
             }
             
-            // No puedes expulsarte a ti mismo (debes salirte o borrar grupo)
+            // Validación lógica: No puedes auto-expulsarte.
             if ($id_admin == $id_usuario_objetivo) {
                  return $this->jsonResponse(['error' => 'No puedes expulsarte a ti mismo.'], 400);
             }

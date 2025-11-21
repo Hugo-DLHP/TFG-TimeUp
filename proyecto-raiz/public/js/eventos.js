@@ -3,13 +3,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const listaEventos = document.getElementById("lista-eventos");
   const RUTA_API = 'http://localhost/TFG/proyecto-raiz/api/index.php';
 
-  // Iniciar carga automática
+  // Iniciar carga automática al entrar en la página
   cargarEventos();
 
   /**
    * Función: cargarEventos
    * Pide al backend TODOS los eventos (pasados y futuros) de los grupos del usuario.
-   * Usa el parámetro &modo=todos para evitar el filtrado por mes.
+   * Usa el parámetro &modo=todos para evitar el filtrado por mes del backend.
    */
   async function cargarEventos() {
     try {
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const todosLosEventos = await response.json();
       
-      // Aplicamos el filtro para no llenar la lista con repeticiones infinitas
+      // Aplicamos el filtro inteligente para no llenar la lista con repeticiones infinitas
       const eventosFiltrados = filtrarProximasRepeticiones(todosLosEventos);
 
       renderizarLista(eventosFiltrados);
@@ -41,13 +41,13 @@ document.addEventListener("DOMContentLoaded", () => {
   function filtrarProximasRepeticiones(eventos) {
       const ahora = new Date();
       const procesados = [];
-      const idsRepetitivosVistos = new Set(); // Para recordar qué series ya hemos mostrado
+      const idsRepetitivosVistos = new Set(); // Set para recordar qué series (IDs) ya hemos mostrado
 
-      // Ordenar por fecha ascendente para encontrar siempre la "próxima" primero
+      // Ordenar por fecha ascendente para encontrar siempre la "próxima" ocurrencia primero
       eventos.sort((a, b) => new Date(a.fecha_inicio) - new Date(b.fecha_inicio));
 
       eventos.forEach(evento => {
-          // CASO 1: Evento único -> Pasa directo
+          // CASO 1: Evento único -> Pasa directo a la lista
           if (evento.repeticion === 'ninguno') {
               procesados.push(evento);
               return;
@@ -56,16 +56,16 @@ document.addEventListener("DOMContentLoaded", () => {
           // CASO 2: Evento repetitivo
           const finEvento = new Date(evento.fecha_fin); // Fin de esta instancia concreta
 
-          // Si esta instancia ya terminó, la ignoramos (para no llenar la lista de pasado)
+          // Si esta instancia ya terminó, la ignoramos (para no llenar la lista con cosas del pasado)
           if (finEvento < ahora) {
               return; 
           }
 
-          // Si es futura y NO hemos visto aún una copia de este evento...
+          // Si es futura y NO hemos visto aún una copia de este evento en el bucle...
           if (!idsRepetitivosVistos.has(evento.id_evento)) {
               // ...esta es la PRÓXIMA ocurrencia. La guardamos.
               procesados.push(evento);
-              // Marcamos como visto para ignorar las copias de mañana, pasado, etc.
+              // Marcamos como visto para ignorar las copias de mañana, pasado, mes que viene, etc.
               idsRepetitivosVistos.add(evento.id_evento);
           }
       });
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const li = document.createElement("li");
       li.classList.add("item-evento"); 
       
-      // Formatear fecha
+      // Formatear fecha para lectura humana
       const fechaEvento = new Date(evento.fecha_inicio);
       const fechaLegible = fechaEvento.toLocaleString('es-ES', { 
           day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' 
@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Verificar permisos (Solo admin/editor puede ver botón eliminar)
       const puedeEditar = (evento.rol_en_grupo === 'administrador' || evento.rol_en_grupo === 'editor');
 
-      // Construcción del HTML de la tarjeta
+      // Construcción del HTML de la tarjeta usando Template String
       li.innerHTML = `
         <div class="contenido-tarjeta" style="border-left: 8px solid ${evento.color || '#3788d8'};">
             
@@ -150,16 +150,14 @@ document.addEventListener("DOMContentLoaded", () => {
    * Gestiona el borrado, preguntando si es serie o instancia única.
    */
   async function eliminarEvento(e) {
-    // Recuperamos los datos del botón
+    // Recuperamos los datos del botón (dataset)
     const id = e.target.dataset.id; // ID del botón clicado
-    // Subimos en el DOM si el click fue en el icono interno, aunque CSS evita pointer-events en hijos a veces
-    // Mejor asegurar con e.currentTarget si usas iconos SVG, pero aquí es texto/emoji.
     
     const repeticion = e.target.dataset.repeticion;
     const fechaInstancia = e.target.dataset.fecha;
     let modoBorrado = 'serie'; // Por defecto
 
-    // Lógica de confirmación personalizada
+    // Lógica de confirmación personalizada para eventos repetitivos
     if (repeticion !== 'ninguno') {
          // Es repetitivo: Preguntamos qué borrar
          if (confirm("Este evento se repite. ¿Quieres borrar SOLO esta fecha?\n\n[Aceptar] = Solo hoy\n[Cancelar] = Preguntar por toda la serie")) {
@@ -175,6 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
+        // Llamada API
         const response = await fetch(`${RUTA_API}?controlador=Evento&accion=eliminar`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

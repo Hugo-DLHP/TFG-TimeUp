@@ -20,6 +20,7 @@
       <p class="texto-intro">Completa los siguientes datos para registrarte.</p>
 
       <form id="formularioRegistro" class="formulario" enctype="multipart/form-data">
+        
         <label for="usuario">Nombre de usuario</label>
         <input type="text" id="usuario" name="nombre" placeholder="Tu nombre de usuario" required>
 
@@ -45,35 +46,39 @@
     <p>© 2025 TimeUp</p>
   </footer>
 
-  <!-- Script con validaciones del formulario -->
   <script src="../js/validación.js"></script>
-
-  <!-- Script modo oscuro con cambio de logo -->
   <script src="../js/tema.js"></script>
 
-  <!-- ENVÍO DEL FORMULARIO AL BACK -->
   <script>
+    // Escucha el evento 'submit' (cuando se pulsa el botón de registrarse)
     document.getElementById("formularioRegistro").addEventListener("submit", async (e) => {
-      e.preventDefault();
+      e.preventDefault(); // Evita que la página se recargue (comportamiento por defecto de HTML)
 
       const form = e.target;
+      // FormData recopila todos los campos del formulario automáticamente, incluyendo el archivo de imagen.
+      // Es necesario usar FormData en lugar de JSON simple cuando hay subida de archivos.
       const formData = new FormData(form);
 
       try {
+        // Petición asíncrona (AJAX) al controlador de Usuario, acción 'registrar'
         const response = await fetch("http://localhost/TFG/proyecto-raiz/api/index.php?controlador=Usuario&accion=registrar", {
           method: "POST",
-          body: formData
+          body: formData // Enviamos el FormData directamente en el cuerpo
         });
 
+        // Esperamos la respuesta del servidor y la convertimos a JSON
         const data = await response.json();
 
         if (response.ok) {
+          // Si el código HTTP es 200-299 (éxito)
           alert("Usuario registrado correctamente ✅");
-          window.location.href = "./inicio-sesion.html";
+          window.location.href = "./inicio-sesion.html"; // Redirigimos al login para que entre
         } else {
+          // Si hubo error (ej. correo duplicado), mostramos el mensaje que envió el backend
           alert("Error: " + (data.error || "No se pudo registrar"));
         }
       } catch (err) {
+        // Captura errores de red o servidor caído
         alert("Error de conexión con el servidor ❌");
         console.error(err);
       }

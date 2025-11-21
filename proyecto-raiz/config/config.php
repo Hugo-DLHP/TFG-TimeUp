@@ -1,9 +1,11 @@
 <?php
 // config/config.php
 
+// Retorna un array asociativo. 
+// Al usar 'return' en un archivo incluido, la variable que hace el 'require' recibe este array.
 return [
-    'db_host' => 'localhost',             // Servidor de la base de datos
-    'db_user' => 'root',                  // Usuario
-    'db_pass' => '',                      // Contraseña (vacía en XAMPP por defecto)
-    'db_name' => 'timeup' // Nombre exacto de tu BD (ojo con la ortografía)
+    'db_host' => 'localhost',             // Dirección del servidor (localhost para desarrollo local).
+    'db_user' => 'root',                  // Usuario de MySQL. En XAMPP por defecto es 'root'.
+    'db_pass' => '',                      // Contraseña. En XAMPP por defecto está vacía.
+    'db_name' => 'timeup'                 // El nombre exacto de la base de datos que creaste en phpMyAdmin.
 ];

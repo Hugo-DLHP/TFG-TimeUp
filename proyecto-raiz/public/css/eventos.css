@@ -4,70 +4,70 @@
 
 /* --- BOTÓN DE NAVEGACIÓN --- */
 .boton-volver {
-    background-color: #007bff; /* Azul corporativo */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: background-color 0.3s ease;
+    background-color: #007bff; /* Fondo azul corporativo */
+    color: white;              /* Texto blanco */
+    border: none;              /* Sin bordes */
+    padding: 10px 20px;        /* Espaciado interno cómodo */
+    border-radius: 5px;        /* Bordes ligeramente redondeados */
+    cursor: pointer;           /* Cursor de mano */
+    font-size: 1rem;           /* Tamaño de letra base */
+    font-weight: 500;          /* Peso medio */
+    display: inline-flex;      /* Para alinear icono y texto si los hubiera */
+    align-items: center;       /* Centrado vertical */
+    gap: 8px;                  /* Espacio entre elementos internos */
+    transition: background-color 0.3s ease; /* Transición suave de color */
 }
 
 .boton-volver:hover {
-    background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+    background-color: #0056b3; /* Oscurece el azul al pasar el ratón */
 }
 
 /* --- CONTENEDOR PRINCIPAL --- */
 .panel-eventos {
-    width: 100%;
-    max-width: 800px; /* Ancho limitado para lectura cómoda */
-    margin: 0 auto;   /* Centrado horizontal */
-    padding: 20px;
+    width: 100%;               /* Ancho completo disponible */
+    max-width: 800px;          /* Ancho máximo limitado para lectura cómoda */
+    margin: 0 auto;            /* Centrado horizontal */
+    padding: 20px;             /* Espaciado interno */
 }
 
 .panel-eventos h2 {
-    text-align: center;
-    color: #333;
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-    font-weight: 700;
+    text-align: center;        /* Título centrado */
+    color: #333;               /* Color oscuro */
+    font-size: 1.8rem;         /* Tamaño grande */
+    margin-bottom: 1.5rem;     /* Margen inferior */
+    font-weight: 700;          /* Negrita */
 }
 
 /* --- LISTA Y TARJETAS DE EVENTOS --- */
 #lista-eventos {
-    list-style: none; /* Quitar puntos de lista */
-    padding: 0;
-    margin: 0;
+    list-style: none;          /* Quita los puntos (bullets) de la lista */
+    padding: 0;                /* Sin padding */
+    margin: 0;                 /* Sin margen */
 }
 
 /* El contenedor externo de la tarjeta */
 .item-evento {
-    background: #fff;
-    border-radius: 8px;
-    margin-bottom: 1.5rem; /* Espacio entre tarjetas */
+    background: #fff;          /* Fondo blanco */
+    border-radius: 8px;        /* Bordes redondeados */
+    margin-bottom: 1.5rem;     /* Espacio entre tarjetas */
     box-shadow: 0 2px 8px rgba(0,0,0,0.08); /* Sombra suave */
-    overflow: hidden; /* Asegura que el borde de color respete el radius */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;          /* Asegura que el contenido no se salga de los bordes redondeados */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Animación al interactuar */
 }
 
 /* Efecto de elevación al pasar el ratón */
 .item-evento:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    transform: translateY(-3px); /* Sube ligeramente */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15); /* Aumenta sombra */
 }
 
 /* Contenedor interno (Flexbox vertical) */
 .contenido-tarjeta {
-    background-color: #fff;
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    background-color: #fff;    /* Fondo blanco */
+    padding: 1.5rem;           /* Espaciado interno */
+    display: flex;             /* Flexbox */
+    flex-direction: column;    /* Elementos uno debajo del otro */
+    gap: 1rem;                 /* Espacio entre elementos */
     /* NOTA: El border-left se aplica vía JS usando el color del grupo */
 }
 
@@ -75,73 +75,73 @@
 
 /* Cabecera: Título y Grupo */
 .header-evento {
-    text-align: center; /* Centrado */
-    border-bottom: 1px solid #f0f0f0;
-    padding-bottom: 10px;
+    text-align: center;        /* Centrado */
+    border-bottom: 1px solid #f0f0f0; /* Línea separadora inferior */
+    padding-bottom: 10px;      /* Espacio antes de la línea */
 }
 
 .header-evento h3 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #333;
-    font-weight: 700;
+    margin: 0;                 /* Sin margen */
+    font-size: 1.5rem;         /* Tamaño título */
+    color: #333;               /* Color oscuro */
+    font-weight: 700;          /* Negrita */
 }
 
 /* Nombre del grupo en pequeño y mayúsculas */
 .grupo-nombre {
-    margin: 5px 0 0 0;
-    font-size: 0.85rem;
-    color: #777;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 600;
+    margin: 5px 0 0 0;         /* Margen superior */
+    font-size: 0.85rem;        /* Letra pequeña */
+    color: #777;               /* Gris */
+    text-transform: uppercase; /* Convierte a mayúsculas */
+    letter-spacing: 1px;       /* Separa las letras */
+    font-weight: 600;          /* Semi-negrita */
 }
 
 /* Cuerpo: Fecha y Descripción */
 .detalles-evento {
-    text-align: center;
-    color: #555;
-    font-size: 1rem;
+    text-align: center;        /* Texto centrado */
+    color: #555;               /* Color gris medio */
+    font-size: 1rem;           /* Tamaño normal */
 }
 
 .detalles-evento p {
-    margin: 0.5rem 0;
+    margin: 0.5rem 0;          /* Margen vertical entre párrafos */
 }
 
 .detalles-evento strong {
-    color: #333;
+    color: #333;               /* Negritas en color oscuro */
 }
 
 /* --- BOTONES DE ACCIÓN (ELIMINAR) --- */
 .acciones-evento {
-    display: flex;
-    justify-content: center; /* Centrado */
-    margin-top: 0.5rem;
+    display: flex;             /* Flexbox */
+    justify-content: center;   /* Centrado horizontal */
+    margin-top: 0.5rem;        /* Margen superior */
 }
 
 .acciones-evento .eliminar {
-    background-color: #fff;
+    background-color: #fff;    /* Fondo blanco */
     border: 2px solid #dc3545; /* Borde rojo */
-    color: #dc3545;            /* Icono rojo */
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;        /* Botón redondo */
-    cursor: pointer;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
+    color: #dc3545;            /* Icono/Texto rojo */
+    width: 40px;               /* Ancho fijo */
+    height: 40px;              /* Alto fijo */
+    border-radius: 50%;        /* Redondo perfecto */
+    cursor: pointer;           /* Cursor de mano */
+    font-size: 1.2rem;         /* Tamaño del icono */
+    display: flex;             /* Flexbox para centrar icono */
+    align-items: center;       /* Centrado vertical */
+    justify-content: center;   /* Centrado horizontal */
+    transition: all 0.3s ease; /* Transición suave */
 }
 
 .acciones-evento .eliminar:hover {
-    background-color: #dc3545; /* Relleno rojo */
+    background-color: #dc3545; /* Fondo rojo al pasar mouse */
     color: white;              /* Icono blanco */
-    transform: rotate(15deg);  /* Pequeña animación */
+    transform: rotate(15deg);  /* Pequeña rotación de efecto visual */
 }
 
 /* Responsive */
 @media (max-width: 600px) {
-    .header-evento h3 { font-size: 1.3rem; }
-    .contenido-tarjeta { padding: 1rem; }
+    .header-evento h3 { font-size: 1.3rem; } /* Título más pequeño en móviles */
+    .contenido-tarjeta { padding: 1rem; }    /* Menos padding en móviles */
 }

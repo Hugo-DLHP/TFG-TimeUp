@@ -1,5 +1,6 @@
-/* 
- * ===========================================================================
+/* usuario.css */
+
+/* * ===========================================================================
  * ESTILOS ESPECÍFICOS PARA PÁGINA DE PERFIL - TimeUp v1.0
  * ===========================================================================
  * Este archivo contiene estilos específicos para la página de perfil de usuario.
@@ -7,8 +8,7 @@
  * ===========================================================================
  */
 
-/* 
- * ENCABEZADO DE LA PÁGINA DE PERFIL
+/* * ENCABEZADO DE LA PÁGINA DE PERFIL
  * ================================
  * Estilo específico para el header de la página de perfil,
  * diferente al header general de la aplicación.
@@ -20,19 +20,17 @@
     border-bottom: 1px solid #ddd; /* Línea divisoria sutil debajo del título */
 }
 
-/* 
- * CONTENEDOR PRINCIPAL DEL CONTENIDO DEL PERFIL
+/* * CONTENEDOR PRINCIPAL DEL CONTENIDO DEL PERFIL
  * ============================================
  * Limita el ancho máximo para mejor legibilidad en pantallas grandes
  * y centra el contenido.
  */
 .profile-content {
-    max-width: 600px;        /* Ancho máximo optimizado para formularios */
+    max-width: 600px;        /* Ancho máximo optimizado para lectura y formularios */
     margin: 0 auto;          /* Centra el contenedor horizontalmente */
 }
 
-/* 
- * SECCIONES DEL PERFIL (TARJETAS VISUALES)
+/* * SECCIONES DEL PERFIL (TARJETAS VISUALES)
  * ========================================
  * Cada sección del perfil (Info Personal, Preferencias) se muestra
  * como una tarjeta visualmente separada.
@@ -52,28 +50,26 @@
     font-size: 1.3rem;      /* Tamaño intermedio entre h2 y h3 base */
 }
 
-/* 
- * COMPONENTE DE SUBIDA DE FOTO DE PERFIL
+/* * COMPONENTE DE SUBIDA DE FOTO DE PERFIL
  * =====================================
  * Diseño específico para el área de carga/cambio de foto de perfil
  * con preview de imagen y botón de acción.
  */
 .photo-upload {
     display: flex;          /* Layout flexible para alinear horizontalmente */
-    align-items: center;    /* Centra verticalmente los elementos */
+    align-items: center;    /* Centra verticalmente los elementos (foto y botón) */
     gap: 1rem;              /* Espacio consistente entre elementos */
 }
 
-/* 
- * PREVIEW DE LA FOTO DE PERFIL
+/* * PREVIEW DE LA FOTO DE PERFIL
  * ===========================
  * Muestra la foto actual del usuario con estilo circular.
  */
 #preview-foto {
     width: 80px;           /* Tamaño fijo para el avatar */
-    height: 80px;          /* Mismo alto que ancho para mantener proporción */
+    height: 80px;          /* Mismo alto que ancho para mantener proporción cuadrada */
     border-radius: 50%;    /* Hace la imagen completamente circular */
-    object-fit: cover;     /* Ajusta la imagen para cubrir el área sin distorsionar */
+    object-fit: cover;     /* Ajusta la imagen para cubrir el área sin distorsionar aunque no sea cuadrada */
     border: 2px solid #ddd; /* Borde sutil alrededor de la imagen */
     transition: border-color 0.3s ease; /* Transición suave para efectos hover */
 }
@@ -83,25 +79,23 @@
     border-color: #007bff; /* Cambia el borde a azul al pasar el mouse */
 }
 
-/* 
- * PERSONALIZACIÓN DE CHECKBOXES
+/* * PERSONALIZACIÓN DE CHECKBOXES
  * =============================
  * Ajustes específicos para inputs tipo checkbox en formularios.
  */
 .form-group input[type="checkbox"] {
-    width: auto;           /* Ancho automático (no ocupa el 100%) */
+    width: auto;           /* Ancho automático (no ocupa el 100% como los inputs de texto) */
     margin-right: 0.5rem;  /* Espacio a la derecha del checkbox */
 }
 
-/* 
- * ESTADOS DE BOTONES DESHABILITADOS
+/* * ESTADOS DE BOTONES DESHABILITADOS
  * ================================
  * Estilos para botones cuando están en estado disabled (no clickeables).
  */
 .btn-primary:disabled {
     background: #6c757d;   /* Color gris para indicar estado inactivo */
     cursor: not-allowed;   /* Cursor de "no permitido" (círculo con diagonal) */
-    transform: none;       /* Elimina efectos de transformación */
+    transform: none;       /* Elimina efectos de transformación (elevación) */
 }
 
 .btn-primary:disabled:hover {
@@ -109,8 +103,7 @@
     transform: none;       /* Sin efecto de elevación en hover */
 }
 
-/* 
- * DISEÑO RESPONSIVE ESPECÍFICO PARA PERFIL
+/* * DISEÑO RESPONSIVE ESPECÍFICO PARA PERFIL
  * =======================================
  * Ajustes para la página de perfil en dispositivos móviles.
  */
@@ -123,13 +116,13 @@
     
     /* En móviles, cambia el layout de photo-upload a columna */
     .photo-upload {
-        flex-direction: column; /* Apila elementos verticalmente */
+        flex-direction: column; /* Apila elementos verticalmente (foto arriba, botón abajo) */
         text-align: center;     /* Centra el contenido */
         gap: 0.5rem;           /* Reduce el espacio entre elementos */
     }
     
     /* Reduce el padding de las secciones en móviles */
     .profile-section {
-        padding: 1rem;         /* Menos padding en pantallas pequeñas */
+        padding: 1rem;         /* Menos padding en pantallas pequeñas para ganar espacio */
     }
 }

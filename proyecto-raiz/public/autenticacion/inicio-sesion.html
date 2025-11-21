@@ -5,17 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar sesión | TimeUp</title>
 
-  <!-- Favicon -->
   <link rel="icon" href="../recursos/iconos/favicoTimeUp.ico" type="image/x-icon">
   <link rel="stylesheet" href="../css/styles1.css">
 </head>
 <body>
-  <!-- Encabezado con logo y botón de tema -->
   <header class="encabezado">
     <a href="../index.html">
       <img src="../recursos/logoTimeUp.png" alt="Logo de TimeUp" class="logo-calendario" id="logo-timeup">
     </a>
-    
     <button id="boton-tema" class="boton-tema" aria-label="Cambiar tema">🌙 Modo oscuro</button>
   </header>
 
@@ -44,36 +41,42 @@
     <p>© 2025 TimeUp</p>
   </footer>
 
-  <!-- Script modo oscuro con cambio de logo -->
   <script src="../js/tema.js"></script>
-
-  <!-- Script de validación -->
   <script src="../js/validación.js"></script>
 
   <script>
     document.getElementById('formularioInicio').addEventListener('submit', async (e) => {
-      e.preventDefault();
+      e.preventDefault(); // Prevenir recarga
 
+      // Obtener valores limpios (sin espacios extra) de los inputs
       const correo = document.getElementById('correo').value.trim();
       const contrasena = document.getElementById('contrasena').value.trim();
 
       try {
+        // Petición al controlador de Autenticación, acción 'login'
         const response = await fetch('http://localhost/TFG/proyecto-raiz/api/index.php?controlador=Autenticacion&accion=login', {
           method: 'POST',
+          // Importante: Aquí indicamos que enviamos JSON, no FormData
           headers: { 'Content-Type': 'application/json' },
+          // Convertimos los datos de JS a texto JSON para enviarlos
           body: JSON.stringify({ correo, contrasena })
         });
 
         const data = await response.json();
 
+        // Si el login es correcto (response.ok y data.exito es true)
         if (response.ok && data.exito) {
-          // Guardar usuario logueado
+          
+          // GUARDAR SESIÓN CLIENTE:
+          // Guardamos los datos del usuario (id, nombre, foto) en localStorage.
+          // Esto permite que otras páginas (como perfil o calendario) sepan quién está logueado.
           localStorage.setItem('usuario', JSON.stringify(data.usuario));
           
           alert('Inicio de sesión correcto ✅');
-          // Redirigir a la página del usuario
+          // Redirección al panel principal del usuario (Dashboard)
           window.location.href = '../usuario/usuario.html';
         } else {
+          // Mensaje de error si la contraseña o usuario fallan
           alert(data.error || 'Correo o contraseña incorrectos ❌');
         }
       } catch (error) {

@@ -7,13 +7,14 @@ require_once __DIR__ . '/../Models/Grupo.php';
 class TareaControlador extends ControladorBase {
 
     /**
-     * Verifica permisos de escritura (Admin/Editor)
+     * Helper Privado: Verifica si el usuario tiene permiso (Admin/Editor) en el calendario.
+     * Si no tiene, detiene la ejecución con un error 403.
      */
     private function verificarPermisoEscritura(int $id_calendario): void {
         $id_usuario = $this->verificarAutenticacion();
         global $conexion;
         
-        // Obtener el grupo del calendario
+        // Averigua a qué grupo pertenece el calendario.
         $stmt = $conexion->prepare("SELECT id_grupo FROM calendarios WHERE id_calendario = ?");
         $stmt->execute([$id_calendario]);
         $id_grupo = $stmt->fetchColumn();
@@ -22,7 +23,7 @@ class TareaControlador extends ControladorBase {
             $this->jsonResponse(['error' => 'Calendario no encontrado.'], 404);
         }
 
-        // Verificar rol
+        // Verifica el rol en ese grupo.
         $rol = Grupo::getRolEnGrupo($id_usuario, $id_grupo);
         if (!in_array($rol, ['administrador', 'editor'])) {
             $this->jsonResponse(['error' => 'Permiso denegado. Solo editores/admins pueden modificar tareas.'], 403);
@@ -30,7 +31,8 @@ class TareaControlador extends ControladorBase {
     }
 
     /**
-     * Obtiene el rol del usuario en el grupo del calendario.
+     * Helper Privado: Devuelve el rol del usuario (string) o null.
+     * Útil para lógica condicional sin detener la ejecución inmediatamente.
      */
     private function obtenerRolEnCalendario(int $id_calendario, int $id_usuario): ?string {
         global $conexion;
@@ -44,9 +46,10 @@ class TareaControlador extends ControladorBase {
     }
 
     /**
-     * LISTAR TAREAS
-     * - Si se envía id_calendario: Filtra según rol (Admin ve todo, Miembro ve asignadas).
-     * - Si NO se envía id_calendario: Devuelve "Mis Tareas" (asignadas globalmente).
+     * Listar tareas.
+     * Comportamiento Dual:
+     * Si viene ?id_calendario: Muestra tareas de ese grupo (Admin ve todas, Miembro ve suyas).
+     * Si NO viene nada: Muestra "Mis Tareas" (Dashboard global).
      */
     public function listar() {
         $id_usuario = $this->verificarAutenticacion();
@@ -54,13 +57,16 @@ class TareaControlador extends ControladorBase {
 
         try {
             if ($id_calendario) {
-                // Vista de Grupo
+                // MODO GRUPO:
+                // Verificamos si tiene acceso al grupo.
                 $rol = $this->obtenerRolEnCalendario($id_calendario, $id_usuario);
                 if (!$rol) $this->jsonResponse(['error' => 'Sin acceso.'], 403);
 
+                // Llama al modelo que filtra según el rol (Admin -> Todo, Miembro -> Asignadas).
                 $tareas = Tarea::getPorCalendarioYRol($id_calendario, $id_usuario, $rol);
             } else {
-                // Vista Global (Dashboard) - Solo lo asignado a mí
+                // MODO DASHBOARD GLOBAL:
+                // Solo muestra tareas asignadas específicamente al usuario en cualquier grupo.
                 $tareas = Tarea::getMisTareasGlobal($id_usuario);
             }
             
@@ -71,8 +77,8 @@ class TareaControlador extends ControladorBase {
     }
 
     /**
-     * CREAR TAREA
-     * Solo Admins y Editores.
+     * Crear tarea.
+     * Transacción: Inserta la tarea Y vincula los usuarios asignados.
      */
     public function crear() {
         $input = json_decode(file_get_contents('php://input'), true);
@@ -82,16 +88,17 @@ class TareaControlador extends ControladorBase {
             $this->jsonResponse(['error' => 'Faltan datos.'], 400);
         }
 
-        // Verificar permisos
+        // Permisos: Solo Admin/Editor crea tareas.
         $rol = $this->obtenerRolEnCalendario($input['id_calendario'], $id_usuario);
         if (!in_array($rol, ['administrador', 'editor'])) {
             $this->jsonResponse(['error' => 'Solo administradores y editores pueden crear tareas.'], 403);
         }
 
         try {
+            // INICIO TRANSACCIÓN.
             $this->db->beginTransaction();
 
-            // Crear la tarea
+            // Insertar tarea en tabla 'tareas'.
             $tarea = new Tarea([
                 'id_calendario' => $input['id_calendario'],
                 'descripcion' => $input['descripcion'],
@@ -100,11 +107,13 @@ class TareaControlador extends ControladorBase {
             ]);
             $id_tarea = $tarea->insert();
 
-            // Asignar usuarios (si vienen en el array 'asignados')
+            // Insertar asignaciones en tabla 'tareas_asignadas'.
+            // Verificamos si el array 'asignados' (ids de usuarios) viene en el JSON.
             if (!empty($input['asignados']) && is_array($input['asignados'])) {
                 Tarea::asignarUsuarios($id_tarea, $input['asignados']);
             } 
 
+            // CONFIRMAR TRANSACCIÓN.
             $this->db->commit();
             $this->jsonResponse(['mensaje' => 'Tarea creada', 'id_tarea' => $id_tarea], 201);
 
@@ -115,8 +124,8 @@ class TareaControlador extends ControladorBase {
     }
 
     /**
-     * ACTUALIZAR TAREA (Descripción, Fecha, Asignados)
-     * Solo Admins y Editores.
+     * Actualizar tarea.
+     * Complejidad: Puede actualizar texto/fecha Y cambiar quién está asignado.
      */
     public function actualizar() {
         $input = json_decode(file_get_contents('php://input'), true);
@@ -126,36 +135,33 @@ class TareaControlador extends ControladorBase {
             $this->jsonResponse(['error' => 'Falta ID de tarea.'], 400);
         }
 
-        // Buscar tarea existente
         $tareaActual = Tarea::find($id_tarea);
         if (!$tareaActual) {
             $this->jsonResponse(['error' => 'Tarea no encontrada.'], 404);
         }
 
-        // Verificar permisos (usando el calendario de la tarea)
+        // Verifica permisos usando el ID de calendario asociado a la tarea.
         $this->verificarPermisoEscritura($tareaActual['id_calendario']);
 
         try {
             $this->db->beginTransaction();
 
-            // Actualizar datos básicos
-            // Fusionamos los datos actuales con los nuevos para no borrar lo que no se envía
+            // Actualizar datos de la tarea.
+            // array_merge combina lo que ya existía con lo nuevo recibido.
             $datosActualizar = array_merge($tareaActual, $input);
             
-            // Limpiamos campos que no deben ir al modelo base (como 'asignados')
+            // Eliminamos 'asignados' de este array porque esa clave no es una columna de la tabla 'tareas'.
             unset($datosActualizar['asignados']); 
 
             $tarea = new Tarea($datosActualizar);
             $tarea->update();
 
-            // Actualizar asignaciones (Opcional: si se envía el array 'asignados')
-            // Si se envía, reemplazamos las asignaciones antiguas por las nuevas
+            // Actualizar lista de usuarios asignados.
             if (isset($input['asignados']) && is_array($input['asignados'])) {
-                // Primero borramos asignaciones existentes
+                // Estrategia: Borrar todos los asignados anteriores e insertar los nuevos.
                 $stmt = $this->db->prepare("DELETE FROM tareas_asignadas WHERE id_tarea = ?");
                 $stmt->execute([$id_tarea]);
 
-                // Luego insertamos las nuevas
                 if (!empty($input['asignados'])) {
                     Tarea::asignarUsuarios($id_tarea, $input['asignados']);
                 }
@@ -171,8 +177,8 @@ class TareaControlador extends ControladorBase {
     }
 
     /**
-     * CAMBIAR ESTADO
-     * Permitido a Miembros (si están asignados) y a Admins/Editores.
+     * Cambiar Estado (Pendiente <-> Completada).
+     * Permisos Especiales: Un miembro normal SÍ puede completar tareas SI está asignado a ellas.
      */
     public function cambiarEstado() {
         $input = json_decode(file_get_contents('php://input'), true);
@@ -190,8 +196,9 @@ class TareaControlador extends ControladorBase {
 
         $rol = $this->obtenerRolEnCalendario($tareaActual['id_calendario'], $id_usuario);
 
-        // Lógica de Permisos:
-        // Acceso permitido si: Eres Admin/Editor O (eres Miembro Y estás asignado a esa tarea)
+        // Lógica de Permisos Compuesta:
+        // ¿Es Admin o Editor? -> Acceso total.
+        // ¿Es Miembro? -> Solo si la tarea está asignada a él.
         $esAsignado = Tarea::esAsignado($id_tarea, $id_usuario);
         $esAdminEditor = in_array($rol, ['administrador', 'editor']);
 
@@ -200,6 +207,7 @@ class TareaControlador extends ControladorBase {
         }
 
         try {
+            // Actualización simple de una columna.
             $tarea = new Tarea(['id_tarea' => $id_tarea, 'estado' => $nuevo_estado]);
             $tarea->update();
             $this->jsonResponse(['mensaje' => 'Estado actualizado'], 200);
@@ -209,8 +217,7 @@ class TareaControlador extends ControladorBase {
     }
 
     /**
-     * ELIMINAR TAREA
-     * Solo Admins y Editores.
+     * Eliminar tarea.
      */
     public function eliminar() {
         $input = json_decode(file_get_contents('php://input'), true);
@@ -222,18 +229,18 @@ class TareaControlador extends ControladorBase {
         $tareaActual = Tarea::find($id_tarea);
         if (!$tareaActual) $this->jsonResponse(['error' => 'Tarea no encontrada'], 404);
 
-        // Verificar permisos
+        // Permisos: Solo Admin/Editor.
         $rol = $this->obtenerRolEnCalendario($tareaActual['id_calendario'], $id_usuario);
         if (!in_array($rol, ['administrador', 'editor'])) {
             $this->jsonResponse(['error' => 'Solo administradores y editores pueden borrar tareas.'], 403);
         }
 
         try {
+            // Elimina la tarea (y por cascada en BD, debería borrar las asignaciones).
             Tarea::deleteById($id_tarea);
             $this->jsonResponse(['mensaje' => 'Tarea eliminada'], 200);
         } catch (Exception $e) {
             $this->jsonResponse(['error' => $e->getMessage()], 500);
         }
     }
-    
 }

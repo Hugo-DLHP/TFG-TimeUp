@@ -1,12 +1,13 @@
-/* 
- * RESET CSS Y CONFIGURACIÓN GLOBAL
+/* style2.css */
+
+/* * RESET CSS Y CONFIGURACIÓN GLOBAL
  * Normaliza los estilos entre diferentes navegadores y establece
  * valores base consistentes para toda la aplicación.
  */
 * {
     margin: 0;          
     padding: 0;         
-    box-sizing: border-box; 
+    box-sizing: border-box; /* El padding no altera el tamaño total */
 }
 
 body {
@@ -17,8 +18,7 @@ body {
     min-height: 100vh;  /* Garantiza que el body ocupe al menos toda la pantalla */
 }
 
-/* 
- * CONTENEDOR PRINCIPAL DE LA APLICACIÓN
+/* * CONTENEDOR PRINCIPAL DE LA APLICACIÓN
  * Contiene y centra todo el contenido de cada página con un ancho máximo
  * para evitar que se expanda demasiado en pantallas grandes.
  */
@@ -29,8 +29,7 @@ body {
     min-height: calc(100vh - 80px); /* Altura mínima menos espacio para header/footer */
 }
 
-/* 
- * JERARQUÍA DE ENCABEZADOS (h1-h6)
+/* * JERARQUÍA DE ENCABEZADOS (h1-h6)
  * Define estilos consistentes para todos los niveles de títulos
  * con una escala tipográfica clara y colores corporativos.
  */
@@ -59,8 +58,7 @@ h3 {
     font-size: 1.5rem;     /* Tamaño mediano */
 }
 
-/* 
- * ESTILOS PARA ENLACES (ETIQUETAS <a>)
+/* * ESTILOS PARA ENLACES (ETIQUETAS <a>)
  * Define la apariencia de todos los hipervínculos con estados hover.
  */
 a {
@@ -74,8 +72,7 @@ a:hover {
     text-decoration: underline; /* Subrayado solo en estado hover */
 }
 
-/* 
- * SISTEMA DE BOTONES - COMPONENTES REUTILIZABLES
+/* * SISTEMA DE BOTONES - COMPONENTES REUTILIZABLES
  * Define estilos base para todos los botones de la aplicación
  * con variantes primaria y secundaria.
  */
@@ -99,7 +96,7 @@ a:hover {
 }
 
 .btn-primary:active {
-    transform: translateY(0); /* Efecto de "presionado" al hacer clic */
+    transform: translateY(0); /* Efecto de "presionado" al hacer clic (quita la elevación) */
 }
 
 /* BOTÓN SECUNDARIO - Para acciones menos importantes */
@@ -137,32 +134,31 @@ a:hover {
 */
 .btn-danger:hover {
     background: #c82333;   /* Rojo más oscuro */
-    transform: translateY(-1px);
+    transform: translateY(-1px); /* Elevación */
 }
 
 /* [MODIFICADO O AÑADIDO POR HUGO]
     Active del botón de peligro 
 */
 .btn-danger:active {
-    transform: translateY(0);
+    transform: translateY(0); /* Presionado */
 }
 
 
-/* 
- * SISTEMA DE MENSAJES PARA EL USUARIO
+/* * SISTEMA DE MENSAJES PARA EL USUARIO
  * ===================================
- * Mensajes temporales que aparecen para confirmar acciones o mostrar errores.
+ * Mensajes temporales que aparecen para confirmar acciones o mostrar errores (Toasts).
  * Se posicionan de forma fija en la esquina superior derecha.
  */
 .mensaje {
-    position: fixed;       /* Posicionamiento fijo respecto a la ventana */
+    position: fixed;       /* Posicionamiento fijo respecto a la ventana (se queda ahí al hacer scroll) */
     top: 20px;            /* 20px desde el borde superior */
     right: 20px;          /* 20px desde el borde derecho */
     padding: 1rem 1.5rem; /* Espaciado interno generoso */
     border-radius: 4px;   /* Esquinas redondeadas */
     z-index: 1000;        /* Alto z-index para estar sobre otros elementos */
     box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Sombra suave para elevación */
-    animation: slideIn 0.3s ease; /* Animación de entrada */
+    animation: slideIn 0.3s ease; /* Ejecuta la animación 'slideIn' al aparecer */
 }
 
 /* Animación para deslizar mensajes desde la derecha */
@@ -191,8 +187,7 @@ a:hover {
     border: 1px solid #f5c6cb; 
 }
 
-/* 
- * SISTEMA DE FORMULARIOS - ESTRUCTURA BASE
+/* * SISTEMA DE FORMULARIOS - ESTRUCTURA BASE
  * Estilos base para todos los formularios de la aplicación.
  */
 
@@ -227,13 +222,12 @@ a:hover {
 .form-group textarea:focus {
     outline: none;        /* Elimina el outline por defecto del navegador */
     border-color: #007bff; /* Borde azul corporativo al estar enfocado */
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25); /* Sombra azul suave alrededor */
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25); /* Sombra azul suave alrededor (halo) */
 }
 
-/* 
- * SISTEMA DE UTILIDADES - CLASES HELPER
+/* * SISTEMA DE UTILIDADES - CLASES HELPER
  * Clases reutilizables para espaciado, alineación y display.
- * Siguen la metodología de utility-first CSS.
+ * Siguen la metodología de utility-first CSS (tipo Bootstrap).
  */
 
 /* Utilidades de alineación de texto */
@@ -257,8 +251,7 @@ a:hover {
 .mb-1 { margin-bottom: 0.5rem; } /* Margin bottom pequeño */
 .mb-2 { margin-bottom: 1rem; }  /* Margin bottom mediano */
 
-/* 
- * DISEÑO RESPONSIVE - MEDIA QUERIES
+/* * DISEÑO RESPONSIVE - MEDIA QUERIES
  * ================================
  * Ajustes específicos para diferentes tamaños de pantalla.
  * Mobile-first: Los estilos base son para móviles, estos ajustes son para pantallas más grandes.
@@ -281,7 +274,7 @@ a:hover {
     .mensaje {
         top: 10px;           /* Menos espacio desde el top */
         right: 10px;         /* Menos espacio desde la derecha */
-        left: 10px;          /* También espacio a la izquierda */
+        left: 10px;          /* También espacio a la izquierda (ocupa todo el ancho) */
         text-align: center;  /* Centra el texto en móviles */
     }
 }

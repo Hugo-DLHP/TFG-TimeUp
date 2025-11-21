@@ -7,24 +7,30 @@ class Tarea extends ModeloBase {
     protected static string $clavePrimaria = 'id_tarea';
 
     /**
-     * Asigna usuarios a una tarea.
+     * Asigna múltiples usuarios a una tarea.
+     * Inserta filas en la tabla 'tareas_asignadas'.
      */
     public static function asignarUsuarios(int $id_tarea, array $ids_usuarios): void {
         global $conexion;
         $sql = "INSERT INTO tareas_asignadas (id_tarea, id_usuario) VALUES (?, ?)";
         $stmt = $conexion->prepare($sql);
         
+        // Recorre la lista de IDs recibida.
         foreach ($ids_usuarios as $id_usuario) {
             try {
+                // Intenta insertar.
                 $stmt->execute([$id_tarea, $id_usuario]);
             } catch (PDOException $e) {
+                // Si falla (ej: clave duplicada, usuario ya asignado), ignoramos el error ('continue')
+                // y seguimos con el siguiente usuario. Esto hace el sistema robusto ante duplicados.
                 continue; 
             }
         }
     }
 
     /**
-     * Verifica si un usuario está asignado a una tarea específica.
+     * Verifica si un usuario específico está asignado a una tarea.
+     * Se usa para validar si un 'miembro' tiene permiso para completar una tarea.
      */
     public static function esAsignado(int $id_tarea, int $id_usuario): bool {
         global $conexion;
@@ -35,15 +41,15 @@ class Tarea extends ModeloBase {
     }
 
     /**
-     * Obtiene las tareas visibles para un usuario en un calendario específico.
-     * - Si es Admin/Editor: Ve TODAS las del calendario.
-     * - Si es Miembro: Ve SOLO las asignadas a él.
+     * Lógica condicional compleja para listar tareas.
+     * Define qué tareas ve el usuario según su ROL en el grupo.
      */
     public static function getPorCalendarioYRol(int $id_calendario, int $id_usuario, string $rol): array {
         global $conexion;
         
         if ($rol === 'administrador' || $rol === 'editor') {
-            // Admin/Editor ve todo
+            // Admin/Editor.
+            // Consulta sin restricciones de usuario: Ve TODAS las tareas del calendario.
             $sql = "SELECT t.*, c.color 
                     FROM tareas t
                     JOIN calendarios c ON t.id_calendario = c.id_calendario
@@ -51,7 +57,9 @@ class Tarea extends ModeloBase {
                     ORDER BY t.estado ASC, t.fecha_limite ASC";
             $params = [$id_calendario];
         } else {
-            // Miembro solo ve asignadas
+            // Miembro normal.
+            // JOIN extra con 'tareas_asignadas' (ta).
+            // Filtra con 'AND ta.id_usuario = ?' para mostrar SOLO lo asignado a él.
             $sql = "SELECT t.*, c.color 
                     FROM tareas t
                     JOIN calendarios c ON t.id_calendario = c.id_calendario
@@ -61,10 +69,14 @@ class Tarea extends ModeloBase {
             $params = [$id_calendario, $id_usuario];
         }
 
+        // Ejecuta la consulta seleccionada.
         $stmt = $conexion->prepare($sql);
         $stmt->execute($params);
         $tareas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+        // ENRIQUECIMIENTO DE DATOS:
+        // Por cada tarea encontrada, buscamos la lista de personas asignadas.
+        // El '&' antes de $tarea significa "pasar por referencia". Permite modificar el array original directamente.
         foreach ($tareas as &$tarea) {
             $tarea['asignados'] = self::obtenerAsignados($tarea['id_tarea']);
         }
@@ -73,7 +85,8 @@ class Tarea extends ModeloBase {
     }
 
     /**
-     * Obtiene la lista de usuarios asignados a una tarea (nombres y fotos).
+     * Método auxiliar privado.
+     * Busca los nombres y fotos de los usuarios asignados a una tarea para mostrarlos en la interfaz.
      */
     private static function obtenerAsignados(int $id_tarea): array {
         global $conexion;
@@ -87,10 +100,13 @@ class Tarea extends ModeloBase {
     }
     
     /**
-     * Obtiene TODAS las tareas asignadas al usuario (Vista global "Mis Tareas").
+     * Vista Global (Dashboard):
+     * Obtiene todas las tareas de TODOS los grupos donde el usuario está asignado.
+     * Útil para la pantalla de "Mis Pendientes".
      */
     public static function getMisTareasGlobal(int $id_usuario): array {
         global $conexion;
+        // JOINs múltiples para traer contexto: nombre del calendario, color, nombre del grupo.
         $sql = "SELECT t.*, c.nombre as nombre_calendario, c.color, g.nombre as nombre_grupo
                 FROM tareas t
                 JOIN calendarios c ON t.id_calendario = c.id_calendario
