@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 miembroItem.className = 'miembro-item';
                 
                 // Ruta relativa para la foto
-                const fotoSrc = miembro.foto ? `../${miembro.foto}` : '../recursos/default-avatar.png';
+                const fotoSrc = miembro.foto ? `../${miembro.foto}` : '../recursos/default.png';
 
                 miembroItem.innerHTML = `
                     <img src="${fotoSrc}" alt="${miembro.nombre}" class="miembro-avatar">
