@@ -45,38 +45,44 @@
   <script src="../js/validación.js"></script>
 
   <script>
-    document.getElementById('formularioInicio').addEventListener('submit', async (e) => {
-      e.preventDefault(); // Prevenir recarga
+    // Modo oscuro sin CSS adicional, solo toggle de clase y persistencia
+    const botonTema = document.getElementById('boton-tema');
+    const body = document.body;
 
-      // Obtener valores limpios (sin espacios extra) de los inputs
+    // Cargar preferencia al iniciar
+    if (localStorage.getItem('modoOscuro') === 'true') {
+      body.classList.add('modo-oscuro');
+      botonTema.textContent = '☀️ Modo claro';
+    }
+
+    botonTema.addEventListener('click', () => {
+      body.classList.toggle('modo-oscuro');
+      const activo = body.classList.contains('modo-oscuro');
+      botonTema.textContent = activo ? '☀️ Modo claro' : '🌙 Modo oscuro';
+      localStorage.setItem('modoOscuro', activo);
+    });
+
+    // Manejo del login
+    document.getElementById('formularioInicio').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
       const correo = document.getElementById('correo').value.trim();
       const contrasena = document.getElementById('contrasena').value.trim();
 
       try {
-        // Petición al controlador de Autenticación, acción 'login'
         const response = await fetch('http://localhost/TFG/proyecto-raiz/api/index.php?controlador=Autenticacion&accion=login', {
           method: 'POST',
-          // Importante: Aquí indicamos que enviamos JSON, no FormData
           headers: { 'Content-Type': 'application/json' },
-          // Convertimos los datos de JS a texto JSON para enviarlos
           body: JSON.stringify({ correo, contrasena })
         });
 
         const data = await response.json();
 
-        // Si el login es correcto (response.ok y data.exito es true)
         if (response.ok && data.exito) {
-          
-          // GUARDAR SESIÓN CLIENTE:
-          // Guardamos los datos del usuario (id, nombre, foto) en localStorage.
-          // Esto permite que otras páginas (como perfil o calendario) sepan quién está logueado.
           localStorage.setItem('usuario', JSON.stringify(data.usuario));
-          
           alert('Inicio de sesión correcto ✅');
-          // Redirección al panel principal del usuario (Dashboard)
           window.location.href = '../usuario/usuario.html';
         } else {
-          // Mensaje de error si la contraseña o usuario fallan
           alert(data.error || 'Correo o contraseña incorrectos ❌');
         }
       } catch (error) {

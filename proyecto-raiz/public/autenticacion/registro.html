@@ -20,7 +20,6 @@
       <p class="texto-intro">Completa los siguientes datos para registrarte.</p>
 
       <form id="formularioRegistro" class="formulario" enctype="multipart/form-data">
-        
         <label for="usuario">Nombre de usuario</label>
         <input type="text" id="usuario" name="nombre" placeholder="Tu nombre de usuario" required>
 
@@ -50,35 +49,45 @@
   <script src="../js/tema.js"></script>
 
   <script>
-    // Escucha el evento 'submit' (cuando se pulsa el botón de registrarse)
+    // Modo oscuro 
+    const botonTema = document.getElementById('boton-tema');
+    const body = document.body;
+
+    // Cargar preferencia al iniciar
+    if (localStorage.getItem('modoOscuro') === 'true') {
+      body.classList.add('modo-oscuro');
+      botonTema.textContent = '☀️ Modo claro';
+    }
+
+    botonTema.addEventListener('click', () => {
+      body.classList.toggle('modo-oscuro');
+      const activo = body.classList.contains('modo-oscuro');
+      botonTema.textContent = activo ? '☀️ Modo claro' : '🌙 Modo oscuro';
+      localStorage.setItem('modoOscuro', activo);
+    });
+
+    // Escucha el evento 'submit' para registro
     document.getElementById("formularioRegistro").addEventListener("submit", async (e) => {
-      e.preventDefault(); // Evita que la página se recargue (comportamiento por defecto de HTML)
+      e.preventDefault(); 
 
       const form = e.target;
-      // FormData recopila todos los campos del formulario automáticamente, incluyendo el archivo de imagen.
-      // Es necesario usar FormData en lugar de JSON simple cuando hay subida de archivos.
       const formData = new FormData(form);
 
       try {
-        // Petición asíncrona (AJAX) al controlador de Usuario, acción 'registrar'
         const response = await fetch("http://localhost/TFG/proyecto-raiz/api/index.php?controlador=Usuario&accion=registrar", {
           method: "POST",
-          body: formData // Enviamos el FormData directamente en el cuerpo
+          body: formData
         });
 
-        // Esperamos la respuesta del servidor y la convertimos a JSON
         const data = await response.json();
 
         if (response.ok) {
-          // Si el código HTTP es 200-299 (éxito)
           alert("Usuario registrado correctamente ✅");
-          window.location.href = "./inicio-sesion.html"; // Redirigimos al login para que entre
+          window.location.href = "./inicio-sesion.html";
         } else {
-          // Si hubo error (ej. correo duplicado), mostramos el mensaje que envió el backend
           alert("Error: " + (data.error || "No se pudo registrar"));
         }
       } catch (err) {
-        // Captura errores de red o servidor caído
         alert("Error de conexión con el servidor ❌");
         console.error(err);
       }

@@ -101,7 +101,7 @@ END$$
 
 -- =====================================================
 --  TRIGGER 4: Control de Salidas (DELETE en usuarios_grupos)
---  Impide que un admin se salga del grupo si es el último administrador.
+--  Impide que un admin se salga del grupo si es el último.
 -- =====================================================
 CREATE TRIGGER tr_prevenir_expulsion_ultimo_admin
 BEFORE DELETE ON usuarios_grupos
