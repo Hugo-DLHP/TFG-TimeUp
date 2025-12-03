@@ -8,29 +8,30 @@
   <link rel="stylesheet" href="../css/styles1.css">
   <link rel="stylesheet" href="../css/style2.css">
   <link rel="stylesheet" href="../css/usuario.css">
-
 </head>
 <body>
   <div class="container">
 
     <header class="profile-header">
       <h1 id="titulo-pagina-perfil">Mi Perfil</h1>
-      <!-- Botón de modo oscuro -->
-     <nav class="barra-navegacion">
-      <ul class="menu-principal">
-        <li><a href="../index.html"><span class="icono">🏠</span> Inicio</a></li>
-        <li><a href="./calendario.html" class="activo"><span class="icono">📅</span> Calendario</a></li>
-        <li><a href="./eventos.html"><span class="icono">🗓️</span> Eventos</a></li>
-        <li><a href="./tareas.html"><span class="icono">✅</span> Tareas</a></li>
-        <li><a href="../usuario/usuario.html"><span class="icono">👤</span> Perfil</a></li>
-        <li><a href="../grupo/grupo.html"><span class="icono">👥</span> Grupos</a></li>
 
-        <!-- BOTÓN TEMA OSCURO -->
-        <button id="boton-tema" class="boton-tema" aria-label="Cambiar tema">
-          🌙 Modo oscuro
-        </button>
-      </ul>
-    </nav>
+      <nav class="barra-navegacion">
+        <ul class="menu-principal">
+          <li><a href="../index.html"><span class="icono">🏠</span> Inicio</a></li>
+          <li><a href="./calendario.html"><span class="icono">📅</span> Calendario</a></li>
+          <li><a href="./eventos.html"><span class="icono">🗓️</span> Eventos</a></li>
+          <li><a href="./tareas.html"><span class="icono">✅</span> Tareas</a></li>
+          <li><a href="../usuario/usuario.html" class="activo"><span class="icono">👤</span> Perfil</a></li>
+          <li><a href="../grupo/grupo.html"><span class="icono">👥</span> Grupos</a></li>
+          <li><a href="../ayuda/ayuda.html"><span class="icono">❓</span> Ayuda</a></li>
+
+          <!-- Botón universal de modo oscuro -->
+          <button id="boton-tema" class="boton-tema" aria-label="Cambiar tema">
+            🌙 Modo oscuro
+          </button>
+        </ul>
+      </nav>
+    </header>
 
     <div class="profile-content">
 
@@ -71,25 +72,6 @@
   </div>
 
   <script src="../js/usuario.js"></script>
-
-  <!-- Script para modo oscuro -->
-  <script>
-    const botonTema = document.getElementById('boton-tema');
-    const body = document.body;
-
-    // Aplicar tema guardado en localStorage al cargar la página
-    if (localStorage.getItem('modoOscuro') === 'true') {
-      body.classList.add('tema-oscuro');
-      botonTema.textContent = '☀️ Modo claro';
-    }
-
-    // Alternar tema al hacer clic
-    botonTema.addEventListener('click', () => {
-      body.classList.toggle('tema-oscuro');
-      const activo = body.classList.contains('tema-oscuro');
-      botonTema.textContent = activo ? '☀️ Modo claro' : '🌙 Modo oscuro';
-      localStorage.setItem('modoOscuro', activo);
-    });
-  </script>
+  <script src="../js/tema.js"></script>
 </body>
 </html>

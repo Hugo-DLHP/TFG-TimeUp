@@ -1,35 +1,62 @@
-// tema.js
-const botonTema = document.getElementById("boton-tema");
-const body = document.body;
-const logo = document.getElementById("logo-timeup");
+document.addEventListener("DOMContentLoaded", () => {
 
-// LÓGICA DE RUTAS INTELIGENTE:
-// Guardamos la ruta base actual del logo (ej: "../recursos/")
-// Esto permite que el script funcione tanto en /usuario/ como en /grupo/ sin romper la ruta de la imagen.
-const currentSrc = logo.getAttribute("src");
-const basePath = currentSrc.substring(0, currentSrc.lastIndexOf('/') + 1);
+    const body = document.body;
+    const botonTema = document.getElementById("boton-tema");
+    const logo = document.getElementById("logo-timeup");
 
-// Recuperar preferencia guardada al cargar la página
-const temaGuardado = localStorage.getItem("tema");
-if (temaGuardado === "oscuro") {
-  body.classList.add("tema-oscuro");
-  botonTema.textContent = "☀️ Modo claro";
-  // Concatenamos la ruta base con el nombre del archivo oscuro
-  logo.src = basePath + "logoTimeUpDark.png"; 
-}
+    // -------------------------------
+    // 1. APLICAR TEMA GUARDADO
+    // -------------------------------
+    const temaGuardado = localStorage.getItem("tema");
+    const esOscuroGuardado = temaGuardado === "oscuro";
 
-// Evento de cambio de tema
-botonTema.addEventListener("click", () => {
-  // Alternar clase CSS en el body
-  body.classList.toggle("tema-oscuro");
-  const esOscuro = body.classList.contains("tema-oscuro");
-  
-  // Actualizar texto del botón
-  botonTema.textContent = esOscuro ? "☀️ Modo claro" : "🌙 Modo oscuro";
-  
-  // Actualizar logo manteniendo la ruta relativa correcta
-  logo.src = basePath + (esOscuro ? "logoTimeUpDark.png" : "logoTimeUp.png");
-  
-  // Guardar preferencia persistente
-  localStorage.setItem("tema", esOscuro ? "oscuro" : "claro");
+    if (esOscuroGuardado) {
+        body.classList.add("tema-oscuro");
+
+        if (botonTema) botonTema.textContent = "☀️ Modo claro";
+
+        if (logo) {
+            const currentSrc = logo.getAttribute("src");
+            const basePath = currentSrc.substring(0, currentSrc.lastIndexOf("/") + 1);
+            logo.src = basePath + "logoTimeUpDark.png";
+        }
+    } else {
+        if (botonTema) botonTema.textContent = "🌙 Modo oscuro";
+    }
+
+    // -------------------------------
+    // 2. GESTIONAR CAMBIO DE TEMA
+    // -------------------------------
+    if (botonTema) {
+        botonTema.addEventListener("click", () => {
+            body.classList.toggle("tema-oscuro");
+
+            const esOscuroAhora = body.classList.contains("tema-oscuro");
+
+            // Guardar preferencia
+            localStorage.setItem("tema", esOscuroAhora ? "oscuro" : "claro");
+
+            // Cambiar texto del botón
+            botonTema.textContent = esOscuroAhora
+                ? "☀️ Modo claro"
+                : "🌙 Modo oscuro";
+
+            // Cambiar logo si existe
+            if (logo) {
+                const currentSrc = logo.getAttribute("src");
+                const basePath = currentSrc.substring(0, currentSrc.lastIndexOf("/") + 1);
+                logo.src = basePath + (esOscuroAhora ? "logoTimeUpDark.png" : "logoTimeUp.png");
+            }
+        });
+    }
+
+    // -------------------------------
+    // 3. OTRO CÓDIGO GLOBAL (FUTURO)
+    // -------------------------------
+    // Aquí podrás añadir:
+    // - menú flotante
+    // - animaciones
+    // - control de navegación
+    // - listeners reutilizables
+    // - funciones compartidas
 });
