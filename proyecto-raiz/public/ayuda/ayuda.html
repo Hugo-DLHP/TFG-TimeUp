@@ -83,9 +83,8 @@
     <p>© 2025 TimeUp. Todos los derechos reservados.</p>
   </footer>
 
-  <!-- JS -->
+  <!-- JS Acordeón FAQ -->
   <script>
-    // Acordeón FAQ
     document.querySelectorAll('.faq-pregunta').forEach(btn => {
       btn.addEventListener('click', () => {
         btn.classList.toggle('activo');
@@ -93,27 +92,10 @@
         contenido.style.maxHeight = contenido.style.maxHeight ? null : contenido.scrollHeight + "px";
       });
     });
-
-    // Modo oscuro y cambio de logo
-    const btnTema = document.getElementById('boton-tema');
-    const logo = document.getElementById('logo-timeup');
-    const logoClaro = '../recursos/logoTimeUp.png';
-    const logoOscuro = '../recursos/logoTimeUpDark.png';
-
-    // Inicializar
-    if(localStorage.getItem('modoOscuro') === 'true') {
-      document.body.classList.add('tema-oscuro');
-      logo.src = logoOscuro;
-      btnTema.textContent = '☀️ Modo claro';
-    }
-
-    btnTema.addEventListener('click', () => {
-      document.body.classList.toggle('tema-oscuro');
-      const oscuro = document.body.classList.contains('tema-oscuro');
-      logo.src = oscuro ? logoOscuro : logoClaro;
-      btnTema.textContent = oscuro ? '☀️ Modo claro' : '🌙 Modo oscuro';
-      localStorage.setItem('modoOscuro', oscuro);
-    });
   </script>
+
+  <!-- JS de tema compartido -->
+  <script src="../js/tema.js"></script>
+
 </body>
 </html>

@@ -10,234 +10,228 @@
 /* Centrado y limitación de ancho para pantallas grandes */
 .barra-calendario,
 .calendario-grid {
-    width: 100%;            /* Ocupa todo el ancho disponible */
-    max-width: 1000px;      /* Pero no más de 1000px para mantener proporción */
-    margin-left: auto;      /* Margen automático izquierda (centrado) */
-    margin-right: auto;     /* Margen automático derecha (centrado) */
+    width: 100%;            
+    max-width: 1000px;      
+    margin-left: auto;      
+    margin-right: auto;     
 }
 
 /* --- BARRA DE NAVEGACIÓN (MES ANTERIOR/SIGUIENTE) --- */
 .barra-calendario {
-    display: flex;           /* Flexbox para alinear título y botones */
-    justify-content: space-between; /* Espacia elementos a los extremos (botones a los lados, título centro) */
-    align-items: center;     /* Centrado vertical */
-    margin-top: 2rem;        /* Margen superior */
-    margin-bottom: 1.5rem;   /* Margen inferior */
-    padding: 0 10px;         /* Padding lateral */
+    display: flex;           
+    justify-content: space-between; 
+    align-items: center;     
+    margin-top: 2rem;        
+    margin-bottom: 1.5rem;   
+    padding: 0 10px;         
 }
 
 .barra-calendario h2 {
-    margin: 0;               /* Sin margen */
-    font-size: 1.8rem;       /* Tamaño grande */
-    text-transform: capitalize; /* Fuerza mayúscula inicial ("noviembre" -> "Noviembre") */
-    color: #333;             /* Color oscuro */
+    margin: 0;               
+    font-size: 1.8rem;       
+    text-transform: capitalize; 
+    color: #000000; /* Negro en modo claro */
+}
+
+/* Modo oscuro: letras del mes en blanco */
+body.tema-oscuro .barra-calendario h2 {
+    color: #ffffff;
 }
 
 /* Estilo de los botones de flecha (circulares azules) */
 .barra-calendario button {
-    background: #007bff;     /* Fondo azul */
-    color: white;            /* Texto/Icono blanco */
-    border: none;            /* Sin borde */
-    width: 40px;             /* Ancho fijo */
-    height: 40px;            /* Alto fijo */
-    border-radius: 8px;      /* Bordes suavizados (no totalmente redondos) */
-    font-size: 1.2rem;       /* Tamaño icono */
-    cursor: pointer;         /* Cursor de mano */
-    transition: background 0.2s; /* Transición de color */
-    display: flex;           /* Flexbox para centrar el icono de flecha dentro del botón */
-    align-items: center;     /* Centrado vertical */
-    justify-content: center; /* Centrado horizontal */
+    background: #007bff;     
+    color: rgb(255, 255, 255);            
+    border: none;            
+    width: 40px;             
+    height: 40px;            
+    border-radius: 8px;      
+    font-size: 1.2rem;       
+    cursor: pointer;         
+    transition: background 0.2s; 
+    display: flex;           
+    align-items: center;     
+    justify-content: center; 
 }
 
 .barra-calendario button:hover {
-    background: #0056b3;     /* Azul más oscuro al pasar el ratón */
+    background: #0056b3;     
 }
 
 /* --- REJILLA DEL CALENDARIO --- */
 .calendario-grid {
-    display: grid;                           /* Modelo Grid */
-    grid-template-columns: repeat(7, 1fr);   /* 7 columnas exactas de igual tamaño (Lunes a Domingo) */
-    gap: 8px;                /* Espacio entre celdas (días) */
-    background-color: #fff;  /* Fondo blanco */
-    padding: 10px;           /* Padding interno */
-    border-radius: 8px;      /* Bordes redondeados */
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Sombra suave */
+    display: grid;                           
+    grid-template-columns: repeat(7, 1fr);   
+    gap: 8px;                
+    background-color: #fff;  
+    padding: 10px;           
+    border-radius: 8px;      
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
 }
 
 /* --- CELDA DE DÍA --- */
 .dia {
-    background-color: #fff;  /* Fondo blanco */
-    border: 1px solid #e0e0e0; /* Borde gris claro */
-    border-radius: 6px;      /* Esquinas redondeadas */
-    padding: 5px;            /* Padding interno */
+    background-color: #fffefe;  
+    border: 1px solid #e0e0e0; 
+    border-radius: 6px;      
+    padding: 5px;            
     
-    /* Truco para mantener la celda cuadrada: */
-    aspect-ratio: 1 / 1;     /* Mantiene proporción 1:1 (ancho = alto) */
-    min-height: 100px;       /* Pero asegura una altura mínima para que no sea diminuto */
+    aspect-ratio: 1 / 1;     
+    min-height: 100px;       
 
-    /* Flexbox vertical para apilar número y eventos */
-    display: flex;           /* Flexbox */
-    flex-direction: column;  /* Dirección vertical */
-    gap: 4px;                /* Espacio entre elementos */
+    display: flex;           
+    flex-direction: column;  
+    gap: 4px;                
     
-    overflow-y: auto;        /* Habilita scroll vertical si hay muchos eventos */
-    scrollbar-width: none;   /* Ocultar barra de scroll en Firefox */
+    overflow-y: auto;        
+    scrollbar-width: none;   
     
-    transition: all 0.2s;    /* Transición suave */
-    cursor: pointer;         /* Cursor de mano */
+    transition: all 0.2s;    
+    cursor: pointer;         
 }
 
-/* Ocultar scrollbar en Chrome/Safari */
-.dia::-webkit-scrollbar { display: none; } /* */
+.dia::-webkit-scrollbar { display: none; } 
 
 .dia:hover {
-    border-color: #007bff;   /* Borde azul al pasar el ratón */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.08); /* Sombra al hover */
+    border-color: #007bff;   
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08); 
 }
 
-/* Estilo para el día de HOY (Destacado) */
 .dia.hoy {
-    background-color: #e8f0fe; /* Fondo azul muy claro */
-    border: 2px solid #007bff; /* Borde azul grueso */
+    background-color: #e8f0fe; 
+    border: 2px solid #007bff; 
 }
 
-/* Número del día */
 .numero-dia {
-    font-weight: bold;       /* Negrita */
-    color: #555;             /* Gris oscuro */
-    align-self: flex-end;    /* Alinear a la derecha de la celda */
-    font-size: 1rem;         /* Tamaño */
-    margin-bottom: 5px;      /* Margen inferior */
+    font-weight: bold;       
+    color: #555;             
+    align-self: flex-end;    
+    font-size: 1rem;         
+    margin-bottom: 5px;      
 }
 
 .dia.hoy .numero-dia {
-    color: #007bff;          /* Número azul si es hoy */
-    font-weight: 800;        /* Extra negrita */
+    color: #007bff;          
+    font-weight: 800;        
 }
 
-/* Días vacíos (relleno antes del día 1 del mes) */
-.dia-vacio { background-color: transparent; border: none; } /* Invisible */
+.dia-vacio { background-color: transparent; border: none; } 
 
 /* --- ESTILO DEL EVENTO (CHIP DE COLOR) --- */
 .evento-chip {
-    background-color: #3788d8; /* Color por defecto (JS lo sobrescribe) */
-    color: white;              /* Texto blanco */
-    padding: 3px 6px;          /* Padding interno */
-    border-radius: 4px;        /* Bordes redondeados */
-    font-size: 0.8rem;         /* Letra pequeña */
-    font-weight: 500;          /* Peso medio */
+    background-color: #3788d8; 
+    color: white;              
+    padding: 3px 6px;          
+    border-radius: 4px;        
+    font-size: 0.8rem;         
+    font-weight: 500;          
     
-    /* Control de texto largo */
-    white-space: nowrap;     /* No saltar línea */
-    overflow: hidden;        /* Ocultar exceso */
-    text-overflow: ellipsis; /* Poner "..." al final si corta */
+    white-space: nowrap;     
+    overflow: hidden;        
+    text-overflow: ellipsis; 
     
-    display: block;          /* Bloque */
-    box-shadow: 0 1px 2px rgba(0,0,0,0.15); /* Sombra pequeña */
-    transition: opacity 0.2s; /* Transición opacidad */
+    display: block;          
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15); 
+    transition: opacity 0.2s; 
 }
 
-.evento-chip:hover { opacity: 0.9; transform: scale(1.02); } /* Efecto hover sutil */
+.evento-chip:hover { opacity: 0.9; transform: scale(1.02); } 
 
 /* --- MODAL FLOTANTE (FORMULARIO) --- */
 .modal {
-    position: fixed;         /* Fijo sobre toda la pantalla */
-    top: 0; left: 0; width: 100%; height: 100%; /* Cubre todo */
-    background-color: rgba(0, 0, 0, 0.4); /* Fondo oscuro semitransparente */
-    z-index: 2000;           /* Capa superior (por encima de todo) */
+    position: fixed;         
+    top: 0; left: 0; width: 100%; height: 100%; 
+    background-color: rgba(0, 0, 0, 0.4); 
+    z-index: 2000;           
     
-    /* Centrado del contenido */
-    display: flex;           /* Flexbox */
-    justify-content: center; /* Centrado horizontal */
-    align-items: flex-start; /* Alineado arriba para evitar cortes en móviles (no center) */
-    padding-top: 5rem;       /* Espacio desde arriba */
+    display: flex;           
+    justify-content: center; 
+    align-items: flex-start; 
+    padding-top: 5rem;       
     
-    transition: opacity 0.3s ease; /* Transición suave */
+    transition: opacity 0.3s ease; 
 }
 
 .modal.oculto {
-    display: none !important; /* Ocultar completamente */
-    opacity: 0;              /* Transparente */
+    display: none !important; 
+    opacity: 0;              
 }
 
 .modal-contenido {
-    background: white;       /* Fondo blanco */
-    padding: 25px;           /* Padding interno */
-    border-radius: 12px;     /* Bordes redondeados */
-    width: 90%;              /* Ancho relativo */
-    max-width: 400px;        /* Ancho máximo del formulario */
-    box-shadow: 0 10px 25px rgba(0,0,0,0.25); /* Sombra fuerte */
-    max-height: 85vh;        /* Altura máxima (85% del viewport) */
-    overflow-y: auto;        /* Scroll interno si el contenido es muy alto */
-    overflow-x: hidden;      /* Evitar scroll horizontal */
+    background: white;       
+    padding: 25px;           
+    border-radius: 12px;     
+    width: 90%;              
+    max-width: 400px;        
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25); 
+    max-height: 85vh;        
+    overflow-y: auto;        
+    overflow-x: hidden;      
     
-    /* Animación de entrada */
-    animation: aparecer 0.3s ease forwards; /* Ejecuta la animación 'aparecer' */
+    animation: aparecer 0.3s ease forwards; 
 }
 
 @keyframes aparecer {
-    from { opacity: 0; transform: translateY(-20px); } /* Empieza invisible y un poco arriba */
-    to { opacity: 1; transform: translateY(0); }       /* Termina visible y en su sitio */
+    from { opacity: 0; transform: translateY(-20px); } 
+    to { opacity: 1; transform: translateY(0); }       
 }
 
 /* --- ESTILOS DEL FORMULARIO --- */
-.form-group { margin-bottom: 1rem; } /* Separación entre campos */
+.form-group { margin-bottom: 1rem; } 
 
 .form-group label {
-    display: block;          /* Bloque propio */
-    margin-bottom: 5px;      /* Margen inferior */
-    font-weight: 600;        /* Negrita */
-    color: #555;             /* Color gris */
+    display: block;          
+    margin-bottom: 5px;      
+    font-weight: 600;        
+    color: #555;             
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
-    width: 100%;             /* Ancho completo */
-    padding: 10px;           /* Padding interno */
-    border: 1px solid #ccc;  /* Borde gris */
-    border-radius: 6px;      /* Bordes redondeados */
-    font-size: 0.95rem;      /* Tamaño letra */
-    box-sizing: border-box; /* El padding no aumenta el ancho total */
+    width: 100%;             
+    padding: 10px;           
+    border: 1px solid #ccc;  
+    border-radius: 6px;      
+    font-size: 0.95rem;      
+    box-sizing: border-box; 
 }
 
-/* Fila de fechas (Inicio | Fin) */
 .form-row {
-    display: flex;           /* Flexbox horizontal */
-    gap: 5px;               /* Espacio pequeño entre inputs */
+    display: flex;           
+    gap: 5px;               
 }
 .form-row input {
-    font-size: 0.85rem;     /* Letra más pequeña para que quepa la fecha completa */
-    padding: 10px 5px;      /* Padding ajustado */
+    font-size: 0.85rem;     
+    padding: 10px 5px;      
 }
-.form-group.half { flex: 1; /* Ocupan el 50% cada uno (crecimiento igual) */ }
+.form-group.half { flex: 1; } 
 
-/* Botonera */
 .botones-formulario {
-    display: flex;           /* Flexbox */
-    justify-content: space-between; /* Espaciado entre extremos */
-    gap: 10px;               /* Gap entre botones */
-    margin-top: 20px;        /* Margen superior */
+    display: flex;           
+    justify-content: space-between; 
+    gap: 10px;               
+    margin-top: 20px;        
 }
 
 .btn-primary, .btn-secondary, .btn-danger {
-    flex: 1;                /* Todos los botones del mismo ancho */
-    padding: 10px;          /* Padding interno */
-    border-radius: 6px;     /* Bordes redondeados */
-    font-weight: 600;       /* Negrita */
-    border: none;           /* Sin borde */
-    cursor: pointer;        /* Cursor de mano */
-    text-align: center;     /* Texto centrado */
+    flex: 1;                
+    padding: 10px;          
+    border-radius: 6px;     
+    font-weight: 600;       
+    border: none;           
+    cursor: pointer;        
+    text-align: center;     
 }
 
-.btn-primary { background: #007bff; color: white; }   /* Estilo botón primario (azul) */
-.btn-secondary { background: #e9ecef; color: #333; }  /* Estilo botón secundario (gris) */
-.btn-danger { background: #dc3545; color: white; }    /* Estilo botón peligro (rojo) */
+.btn-primary { background: #007bff; color: white; }   
+.btn-secondary { background: #e9ecef; color: #333; }  
+.btn-danger { background: #dc3545; color: white; }    
 
 /* --- RESPONSIVE (MÓVIL) --- */
 @media (max-width: 768px) {
-    .calendario-grid { gap: 4px; padding: 5px; }      /* Menos espacio en grid */
-    .dia { min-height: 60px; font-size: 0.8rem; padding: 2px; } /* Celdas más pequeñas */
-    .evento-chip { font-size: 0.65rem; padding: 1px 3px; } /* Chips minúsculos */
-    .modal { align-items: center; padding-top: 0; } /* Centrado total en móvil (sin padding top) */
+    .calendario-grid { gap: 4px; padding: 5px; }      
+    .dia { min-height: 60px; font-size: 0.8rem; padding: 2px; } 
+    .evento-chip { font-size: 0.65rem; padding: 1px 3px; } 
+    .modal { align-items: center; padding-top: 0; } 
 }

@@ -18,14 +18,13 @@
       <nav class="barra-navegacion">
         <ul class="menu-principal">
           <li><a href="../index.html"><span class="icono">🏠</span> Inicio</a></li>
-          <li><a href="./calendario.html"><span class="icono">📅</span> Calendario</a></li>
-          <li><a href="./eventos.html"><span class="icono">🗓️</span> Eventos</a></li>
-          <li><a href="./tareas.html"><span class="icono">✅</span> Tareas</a></li>
+          <li><a href="../calendario/calendario.html"><span class="icono">📅</span> Calendario</a></li>
+          <li><a href="../calendario/eventos.html"><span class="icono">🗓️</span> Eventos</a></li>
+          <li><a href="../calendario/tareas.html"><span class="icono">✅</span> Tareas</a></li>
           <li><a href="../usuario/usuario.html" class="activo"><span class="icono">👤</span> Perfil</a></li>
           <li><a href="../grupo/grupo.html"><span class="icono">👥</span> Grupos</a></li>
           <li><a href="../ayuda/ayuda.html"><span class="icono">❓</span> Ayuda</a></li>
 
-          <!-- Botón universal de modo oscuro -->
           <button id="boton-tema" class="boton-tema" aria-label="Cambiar tema">
             🌙 Modo oscuro
           </button>
@@ -34,7 +33,6 @@
     </header>
 
     <div class="profile-content">
-
       <section class="profile-section">
         <h2>Información Personal</h2>
 
@@ -55,9 +53,7 @@
 
             <div class="photo-upload">
               <img id="preview-foto" src="../recursos/perfiles/default.png" alt="Foto de perfil">
-
               <input type="file" id="foto-perfil" name="fotoPerfil" accept="image/*" style="display: none;">
-
               <button type="button" id="btn-cambiar-foto" class="btn-secondary">
                 Cambiar foto
               </button>
@@ -67,11 +63,22 @@
           <button type="submit" class="btn-primary">Guardar cambios</button>
         </form>
       </section>
-
     </div>
   </div>
 
+  <!-- JS de usuario -->
   <script src="../js/usuario.js"></script>
+
+  <!-- JS de tema compartido: aplica modo claro/oscuro y guarda preferencia -->
   <script src="../js/tema.js"></script>
+
+  <!-- Protección de acceso -->
+  <script>
+    const usuarioLogueado = localStorage.getItem("usuarioLogueado");
+    if (!usuarioLogueado) {
+      window.location.href = "../index.html";
+    }
+  </script>
+
 </body>
 </html>

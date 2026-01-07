@@ -11,18 +11,17 @@
 </head>
 <body>
   <header class="encabezado">
-    <img src="../recursos/logoTimeUp.png" alt="Logo de TimeUp" class="logo-calendario">
+    <img src="../recursos/logoTimeUp.png" alt="Logo de TimeUp" class="logo-calendario" id="logo-timeup">
     <h1>Lista de Eventos</h1>
     
     <nav class="barra-navegacion">
       <ul class="menu-principal">
-        <li><a href="."><span class="icono">🏠</span> Inicio</a></li>
-        <li><a href="./calendario/calendario.html"><span class="icono">📅</span> Calendario</a></li>
-        <li><a href="./calendario/eventos.html"><span class="icono">🗓️</span> Eventos</a></li>
-        <li><a href="./usuario/usuario.html"><span class="icono">👤</span> Perfil</a></li>
-        <li><a href="../ayuda/ayuda.html"><span class="icono">❓</span> Ayuda</a></li>
-        <li><a href="./grupo/grupo.html">GRUPOS</a></li>
-        <li>
+         <li><a href="../index.html"><span class="icono">🏠</span> Inicio</a></li>
+         <li><a href="./calendario.html" class="activo"><span class="icono">📅</span> Calendario</a></li>
+         <li><a href="./eventos.html"><span class="icono">🗓️</span> Eventos</a></li>
+         <li><a href="../usuario/usuario.html"><span class="icono">👤</span> Perfil</a></li>
+         <li><a href="../grupo/grupo.html"><span class="icono">👥</span> Grupos</a></li>
+         <li><a href="../ayuda/ayuda.html"><span class="icono">❓</span> Ayuda</a></li>
           <button id="boton-tema" class="boton-tema" aria-label="Cambiar tema">
             🌙 Modo oscuro
           </button>
@@ -40,26 +39,12 @@
     </section>
   </main>
 
+  <!-- JS de eventos -->
   <script src="../js/eventos.js"></script>
 
-  <script>
-    // Modo oscuro con persistencia en localStorage usando la clase correcta de CSS
-    const botonTema = document.getElementById('boton-tema');
-    const body = document.body;
+  <!-- JS de tema compartido con otras páginas -->
+  <script src="../js/tema.js"></script>
 
-    // Aplicar preferencia guardada al cargar la página
-    if (localStorage.getItem('modoOscuro') === 'true') {
-      body.classList.add('tema-oscuro');
-      botonTema.textContent = '☀️ Modo claro';
-    }
-
-    // Alternar modo oscuro al hacer clic
-    botonTema.addEventListener('click', () => {
-      body.classList.toggle('tema-oscuro');
-      const activo = body.classList.contains('tema-oscuro');
-      botonTema.textContent = activo ? '☀️ Modo claro' : '🌙 Modo oscuro';
-      localStorage.setItem('modoOscuro', activo);
-    });
-  </script>
+  <!-- El script interno de modo oscuro ya no es necesario y puede eliminarse -->
 </body>
 </html>
