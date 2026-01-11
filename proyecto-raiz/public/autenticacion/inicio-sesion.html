@@ -31,64 +31,58 @@
         <button type="submit" class="boton boton-principal">Entrar</button>
       </form>
 
-      <p class="enlace-alternativo">
+      <p class="texto-pie">
         ¿No tienes cuenta? <a href="./registro.html">Regístrate aquí</a>
       </p>
     </section>
   </main>
 
   <footer class="pie-pagina">
-    <p>© 2025 TimeUp</p>
+    <p>© 2025 TimeUp. Todos los derechos reservados.</p>
   </footer>
 
   <script src="../js/tema.js"></script>
-  <script src="../js/validación.js"></script>
-
   <script>
-    // Modo oscuro sin CSS adicional, solo toggle de clase y persistencia
-    const botonTema = document.getElementById('boton-tema');
-    const body = document.body;
-
-    // Cargar preferencia al iniciar
-    if (localStorage.getItem('modoOscuro') === 'true') {
-      body.classList.add('modo-oscuro');
-      botonTema.textContent = '☀️ Modo claro';
-    }
-
-    botonTema.addEventListener('click', () => {
-      body.classList.toggle('modo-oscuro');
-      const activo = body.classList.contains('modo-oscuro');
-      botonTema.textContent = activo ? '☀️ Modo claro' : '🌙 Modo oscuro';
-      localStorage.setItem('modoOscuro', activo);
-    });
-
-    // Manejo del login
     document.getElementById('formularioInicio').addEventListener('submit', async (e) => {
-      e.preventDefault();
+        e.preventDefault();
 
-      const correo = document.getElementById('correo').value.trim();
-      const contrasena = document.getElementById('contrasena').value.trim();
+        const correo = document.getElementById('correo').value.trim();
+        const contrasena = document.getElementById('contrasena').value.trim();
+        const RUTA_API = 'http://localhost/TFG/proyecto-raiz/api/index.php';
 
-      try {
-        const response = await fetch('http://localhost/TFG/proyecto-raiz/api/index.php?controlador=Autenticacion&accion=login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ correo, contrasena })
-        });
+        try {
+            const response = await fetch(`${RUTA_API}?controlador=Autenticacion&accion=login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ correo, contrasena })
+            });
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (response.ok && data.exito) {
-          localStorage.setItem('usuario', JSON.stringify(data.usuario));
-          alert('Inicio de sesión correcto ✅');
-          window.location.href = '../usuario/usuario.html';
-        } else {
-          alert(data.error || 'Correo o contraseña incorrectos ❌');
+            if (response.ok && data.exito) {
+                // Guardar sesión
+                localStorage.setItem('usuario', JSON.stringify(data.usuario));
+                alert('Inicio de sesión correcto ✅');
+
+                // --- REDIRECCIÓN INTELIGENTE ---
+                const pathActual = window.location.pathname;
+                let rutaDestino = '../usuario/usuario.html';
+
+                // Si estamos en /autenticacion/inicio-sesion.html, reemplazamos para ir a usuario
+                if (pathActual.includes('/autenticacion/')) {
+                    rutaDestino = pathActual.replace('/autenticacion/inicio-sesion.html', '/usuario/usuario.html');
+                }
+
+                console.log("Redirigiendo a:", rutaDestino); // Mira la consola si falla
+                window.location.href = rutaDestino;
+
+            } else {
+                alert(data.error || 'Credenciales incorrectas ❌');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error de conexión.');
         }
-      } catch (error) {
-        console.error('Error en la solicitud:', error);
-        alert('Error de conexión con el servidor.');
-      }
     });
   </script>
 </body>

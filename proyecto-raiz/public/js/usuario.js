@@ -1,139 +1,115 @@
-// usuario.js
-// ===========================================================================
-// GESTIÓN DE PERFIL DE USUARIO - TimeUp
-// ===========================================================================
+// UBICACIÓN: public/js/usuario.js
 
 document.addEventListener('DOMContentLoaded', function() {
-    // --- Referencias al DOM ---
-    const profileForm = document.getElementById('profile-form'); // Formulario principal
     
-    // Elementos de la foto de perfil (UI personalizada)
+    // --- 1. SEGURIDAD: VERIFICAR SESIÓN ---
+    const usuarioLogueado = localStorage.getItem('usuario'); 
+    
+    // Si NO hay usuario guardado, expulsar inmediatamente
+    if (!usuarioLogueado) {
+        console.warn("Acceso denegado: No hay usuario logueado.");
+        
+        // CORRECCIÓN: Usar window.location.origin para construir una ruta absoluta
+        // Esto funciona tanto en localhost/TFG como en cualquier subcarpeta
+        
+        // Obtenemos la base (ej: http://localhost/TFG/proyecto-raiz/public)
+        // Asumimos que estamos en /usuario/usuario.html, así que subimos 2 niveles
+        // o buscamos la carpeta 'public' en la URL actual.
+        
+        const pathActual = window.location.pathname;
+        let rutaLogin = '../autenticacion/inicio-sesion.html'; // Fallback por defecto
+
+        // Intento de ruta inteligente: reemplazar la carpeta actual por la de autenticación
+        if (pathActual.includes('/usuario/')) {
+            rutaLogin = pathActual.replace('/usuario/usuario.html', '/autenticacion/inicio-sesion.html');
+        }
+
+        window.location.href = rutaLogin;
+        return; 
+    }
+
+    // --- 2. REFERENCIAS Y VARIABLES ---
+    const profileForm = document.getElementById('profile-form');
     const btnCambiarFoto = document.getElementById('btn-cambiar-foto');
-    const inputFoto = document.getElementById('foto-perfil'); // Input oculto
-    const previewFoto = document.getElementById('preview-foto'); // Imagen <img>
-    
-    // Título de la página para personalizar con el nombre
+    const inputFoto = document.getElementById('foto-perfil');
+    const previewFoto = document.getElementById('preview-foto');
     const tituloPagina = document.getElementById('titulo-pagina-perfil');
     
-    // --- Inicialización ---
-    actualizarTituloPagina(); // Pone "Perfil de Juan"
-    cargarPerfil();           // Rellena los inputs con datos actuales
-    
-    // --- Event Listeners ---
+    // Asegúrate de que esta URL sea correcta
+    const RUTA_API = 'http://localhost/TFG/proyecto-raiz/api/index.php';
 
-    // Click en botón "Cambiar foto" -> Simula click en input file oculto
-    btnCambiarFoto.addEventListener('click', function() {
-        inputFoto.click();
-    });
-    
-    // Cuando el usuario selecciona un archivo (cambio en el input file)
-    inputFoto.addEventListener('change', function() {
-        if (this.files && this.files[0]) {
-            // Usamos FileReader para leer la imagen en memoria antes de subirla
-            const reader = new FileReader();
-            
-            // Cuando termine de leer, actualizamos el 'src' de la imagen para previsualizarla
-            reader.onload = function(e) {
-                previewFoto.src = e.target.result;
-            };
-            
-            // Leemos el archivo como URL de datos (base64)
-            reader.readAsDataURL(this.files[0]);
-        }
-    });
-    
-    // Envío del formulario (guardar cambios)
-    profileForm.addEventListener('submit', guardarPerfil);
-    
-    
-    // --- Funciones Lógicas ---
+    // --- 3. INICIALIZACIÓN ---
+    cargarPerfil();
 
-    // Actualiza el H1 con el nombre guardado en localStorage
-    function actualizarTituloPagina() {
-        try {
-            const usuario = JSON.parse(localStorage.getItem('usuario'));
-            if (usuario && usuario.nombre) {
-                tituloPagina.textContent = `Perfil de ${usuario.nombre}`;
+    // --- 4. EVENTOS ---
+    if (btnCambiarFoto && inputFoto) {
+        btnCambiarFoto.addEventListener('click', () => inputFoto.click());
+    }
+    
+    if (inputFoto) {
+        inputFoto.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    if (previewFoto) previewFoto.src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
             }
-        } catch (error) {
-            console.error('Error al leer datos de usuario:', error);
-        }
+        });
     }
 
-    // Rellena los campos del formulario con la info actual
+    if (profileForm) {
+        profileForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            actualizarPerfil(new FormData(this));
+        });
+    }
+
+    // --- 5. FUNCIONES ---
     function cargarPerfil() {
-        const usuario = JSON.parse(localStorage.getItem('usuario'));
-        
-        if (usuario) {
-            document.getElementById('nombre').value = usuario.nombre || '';
-            document.getElementById('correo').value = usuario.correo || '';
+        try {
+            const usuarioObj = JSON.parse(usuarioLogueado);
             
-            // Manejo de ruta de foto:
-            if (usuario.foto) {
-                // Ajustamos la ruta relativa porque estamos dentro de la carpeta /usuario/
-                previewFoto.src = `../${usuario.foto}`;
-            } else {
-                previewFoto.src = '../recursos/perfiles/default.png';
+            if (tituloPagina) tituloPagina.textContent = `Perfil de ${usuarioObj.nombre}`;
+
+            const inputNombre = document.getElementById('nombre');
+            const inputCorreo = document.getElementById('correo');
+            
+            if (inputNombre) inputNombre.value = usuarioObj.nombre || '';
+            if (inputCorreo) inputCorreo.value = usuarioObj.correo || '';
+            
+            if (usuarioObj.foto && previewFoto) {
+                // Manejo robusto de rutas de imagen
+                let rutaFoto = usuarioObj.foto;
+                // Si no empieza con ../ y no es una dataURL (base64), le agregamos ../
+                if (!rutaFoto.startsWith('../') && !rutaFoto.startsWith('data:')) {
+                    rutaFoto = `../${rutaFoto}`;
+                }
+                previewFoto.src = rutaFoto;
             }
-        } else {
-            console.error("No se encontraron datos de usuario. Redirigiendo a login.");
-            // Aquí se podría descomentar la redirección por seguridad
-            // window.location.href = '../autenticacion/inicio-sesion.html';
+        } catch (e) {
+            console.error("Error al procesar datos del usuario", e);
         }
     }
-    
-    // Envía los datos modificados al servidor
-    async function guardarPerfil(event) {
-        event.preventDefault(); // Evita recarga
-        
-        // Usamos FormData porque puede haber un archivo (foto)
-        const formData = new FormData(profileForm);
 
-        // URL de la API (controlador Usuario, acción actualizar)
-        const RUTA_API = 'http://localhost/TFG/proyecto-raiz/api/index.php?controlador=Usuario&accion=actualizar';
-
+    async function actualizarPerfil(formData) {
         try {
-            const response = await fetch(RUTA_API, {
+            const response = await fetch(`${RUTA_API}?controlador=Usuario&accion=actualizar`, {
                 method: 'POST',
-                body: formData // FormData gestiona automáticamente los headers multipart/form-data
+                body: formData
             });
-
             const data = await response.json();
-
-            if (response.ok) {
-                mostrarMensaje('Perfil actualizado correctamente', 'exito');
-                if (data.usuario) {
-                    // IMPORTANTE: Actualizamos el localStorage con los nuevos datos (ej: nueva foto)
-                    // para que el resto de páginas (calendario, header) muestren la info actualizada
-                    localStorage.setItem('usuario', JSON.stringify(data.usuario));
-                    
-                    // Refrescamos el título inmediatamente
-                    actualizarTituloPagina();
-                }
+            
+            if (response.ok && data.usuario) {
+                alert('Perfil actualizado correctamente ✅');
+                localStorage.setItem('usuario', JSON.stringify(data.usuario));
+                window.location.reload();
             } else {
-                mostrarMensaje(data.error || 'Error al actualizar el perfil', 'error');
+                alert(data.error || 'Error al actualizar ❌');
             }
         } catch (error) {
-            console.error('Error:', error);
-            mostrarMensaje('Error de conexión', 'error');
+            console.error(error);
+            alert('Error de conexión con el servidor.');
         }
-    }
-    
-    // Utilidad para mostrar mensajes flotantes (Toast)
-    function mostrarMensaje(mensaje, tipo) {
-        const mensajesAnteriores = document.querySelectorAll('.mensaje');
-        mensajesAnteriores.forEach(msg => msg.remove());
-        
-        const mensajeDiv = document.createElement('div');
-        mensajeDiv.className = `mensaje mensaje-${tipo}`; // Clase CSS dinámica (éxito/error)
-        mensajeDiv.textContent = mensaje;
-        
-        document.body.appendChild(mensajeDiv);
-        
-        setTimeout(() => {
-            if (mensajeDiv.parentNode) {
-                mensajeDiv.remove();
-            }
-        }, 3000); // Desaparece a los 3 segundos
     }
 });

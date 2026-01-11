@@ -70,15 +70,16 @@ class GrupoControlador extends ControladorBase {
     }
 
     /**
-     * Devuelve la lista de grupos a los que pertenece el usuario.
+     * --- FUNCIÓN ACTUALIZADA ---
+     * Devuelve la lista de grupos del usuario CON su id_calendario.
      */
     public function misGrupos() {
         $id_usuario = $this->verificarAutenticacion();
-        
         try {
-            $grupos = Grupo::findByUsuario($id_usuario);
+            // Usamos la nueva consulta optimizada
+            $grupos = Grupo::obtenerGruposConCalendario($id_usuario);
             $this->jsonResponse($grupos, 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->jsonResponse(['error' => $e->getMessage()], 500);
         }
     }
