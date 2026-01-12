@@ -1,0 +1,132 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Tarea | TimeUp</title>
+    <link rel="stylesheet" href="../css/styles1.css">
+    <link rel="stylesheet" href="../css/style2.css">
+    <link rel="stylesheet" href="../css/usuario.css">
+    <link rel="stylesheet" href="../css/tareas.css">
+</head>
+<body>
+    <div class="container">
+        <header class="profile-header">
+            <h1>Crear Nueva Tarea</h1>
+            <a href="tareas.html" class="btn-secondary" style="text-decoration:none; font-size:0.9rem;">← Volver a la lista</a>
+        </header>
+        
+        <div class="profile-content">
+            <section class="profile-section">
+                <h2>Detalles de la Tarea</h2>
+                <form id="form-crear-tarea">
+                    <div class="form-group">
+                        <label>Grupo / Calendario:</label>
+                        <select id="select-grupo" required>
+                            <option value="">Cargando grupos...</option>
+                        </select>
+                        <small style="color:#666; font-size:0.8rem;">Selecciona un grupo para asignar miembros.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descripción:</label>
+                        <textarea id="descripcion" rows="4" required placeholder="¿Qué hay que hacer?"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label>Fecha Límite:</label>
+                            <input type="date" id="fecha_limite">
+                        </div>
+                        <div class="form-group half">
+                            <label>Estado Inicial:</label>
+                            <select id="estado-inicial">
+                                <option value="pendiente">Pendiente</option>
+                                <option value="en_proceso">En Proceso</option>
+                                <option value="completada">Completada</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Asignar a:</label>
+                        <div id="lista-asignables" class="lista-checks-container">
+                            <p class="text-muted">Selecciona un grupo arriba para ver miembros.</p>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width:100%; margin-top:1rem;">Crear Tarea</button>
+                </form>
+            </section>
+        </div>
+    </div>
+    <script src="../js/crear_tareas.js"></script>
+</body>
+=======
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Tarea | TimeUp</title>
+    <link rel="stylesheet" href="../css/styles1.css">
+    <link rel="stylesheet" href="../css/style2.css">
+    <link rel="stylesheet" href="../css/usuario.css">
+    <link rel="stylesheet" href="../css/tareas.css">
+</head>
+<body>
+    <div class="container">
+        <header class="profile-header">
+            <h1>Crear Nueva Tarea</h1>
+            <a href="tareas.html" class="btn-secondary" style="text-decoration:none; font-size:0.9rem;">← Volver a la lista</a>
+        </header>
+        
+        <div class="profile-content">
+            <section class="profile-section">
+                <h2>Detalles de la Tarea</h2>
+                <form id="form-crear-tarea">
+                    <div class="form-group">
+                        <label>Grupo / Calendario:</label>
+                        <select id="select-grupo" required>
+                            <option value="">Cargando grupos...</option>
+                        </select>
+                        <small style="color:#666; font-size:0.8rem;">Selecciona un grupo para asignar miembros.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descripción:</label>
+                        <textarea id="descripcion" rows="4" required placeholder="¿Qué hay que hacer?"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label>Fecha Límite:</label>
+                            <input type="date" id="fecha_limite">
+                        </div>
+                        <div class="form-group half">
+                            <label>Estado Inicial:</label>
+                            <select id="estado-inicial">
+                                <option value="pendiente">Pendiente</option>
+                                <option value="en_proceso">En Proceso</option>
+                                <option value="completada">Completada</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Asignar a:</label>
+                        <div id="lista-asignables" class="lista-checks-container">
+                            <p class="text-muted">Selecciona un grupo arriba para ver miembros.</p>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width:100%; margin-top:1rem;">Crear Tarea</button>
+                </form>
+            </section>
+        </div>
+    </div>
+    <script src="../js/crear_tareas.js"></script>
+</body>
+>>>>>>> 3839f8b1b26d8fd42ed888572b0a3fbc7650862e
+</html>

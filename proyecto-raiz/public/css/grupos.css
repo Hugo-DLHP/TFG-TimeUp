@@ -1,0 +1,321 @@
+/* * ===========================================================================
+ * ESTILOS ESPECÍFICOS PARA GESTIÓN DE GRUPOS - TimeUp v1.0
+ * ===========================================================================
+ * Este archivo contiene estilos específicos para la página de gestión de grupos.
+ * Incluye estilos para listas de grupos, tarjetas, modales y componentes de invitación.
+ * ===========================================================================
+ */
+
+/* * CONTENEDOR PRINCIPAL DE LA PÁGINA DE GRUPOS
+ * ===========================================
+ * Contenedor específico para el contenido de grupos con un ancho máximo
+ * mayor que el perfil para acomodar la cuadrícula de grupos.
+ */
+.grupos-container {
+    max-width: 1000px;      /* Limita el ancho para que no se estire demasiado en monitores grandes */
+    margin: 0 auto;         /* Centra el contenedor horizontalmente en la pantalla */
+    padding: 0 1rem;        /* Añade un pequeño margen interno lateral para que no pegue con los bordes en móviles */
+}
+
+/* * ENCABEZADO DE LA PÁGINA DE GRUPOS
+ * ================================
+ * Header específico con layout flexible para título y botón de acción.
+ */
+.grupos-header {
+    display: flex;           /* Activa Flexbox para alinear elementos en fila */
+    justify-content: space-between; /* Empuja el título a la izquierda y el botón a la derecha */
+    align-items: center;     /* Centra verticalmente los elementos (título y botón) */
+    margin-bottom: 2rem;     /* Espacio generoso debajo del header para separarlo del contenido */
+    padding-bottom: 1rem;    /* Espacio interno inferior */
+    border-bottom: 1px solid #ddd; /* Línea divisoria sutil gris al final del header */
+}
+
+/* * CUADRÍCULA DE LISTA DE GRUPOS (GRID LAYOUT)
+ * ==========================================
+ * Diseño de cuadrícula responsive para mostrar las tarjetas de grupos.
+ * Utiliza CSS Grid para un layout flexible y responsive.
+ */
+.lista-grupos {
+    display: grid;                          /* Activa el modelo CSS Grid */
+    
+    /* Lógica inteligente de columnas:
+     * repeat(auto-fill, ...): Crea tantas columnas como quepan automáticamente.
+     * minmax(300px, 1fr): Cada tarjeta mide mínimo 300px. Si sobra espacio, se estira (1fr).
+     */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+    
+    gap: 1.5rem;            /* Espacio (calle) entre las tarjetas de grupo tanto vertical como horizontal */
+    margin-bottom: 2rem;    /* Espacio debajo de toda la lista */
+}
+
+/* * TARJETA INDIVIDUAL DE GRUPO
+ * ===========================
+ * Cada grupo se muestra como una tarjeta interactiva con información
+ * y acciones disponibles.
+ */
+.grupo-card {
+    background: white;       /* Fondo blanco para contraste con el fondo de la página */
+    border-radius: 8px;      /* Bordes redondeados para aspecto moderno */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sombra suave inicial para dar profundidad */
+    padding: 1.5rem;         /* Espaciado interno generoso para que el texto no toque los bordes */
+    transition: transform 0.2s, box-shadow 0.2s; /* Suaviza la animación al pasar el mouse (hover) */
+}
+
+/* Efectos de hover para indicar interactividad */
+.grupo-card:hover {
+    transform: translateY(-3px);        /* Mueve la tarjeta 3 píxeles hacia arriba */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Aumenta la sombra para simular elevación */
+}
+
+/* Título del grupo dentro de la tarjeta */
+.grupo-card h3 {
+    margin-top: 0;          /* Elimina el margen superior por defecto del h3 */
+    color: #333;            /* Color gris oscuro para el texto (mejor que negro puro) */
+    font-size: 1.2rem;      /* Tamaño de fuente ligeramente aumentado */
+}
+
+/* Descripción del grupo */
+.grupo-descripcion {
+    color: #666;            /* Color gris medio para indicar que es texto secundario */
+    margin-bottom: 1rem;    /* Espacio debajo de la descripción */
+    line-height: 1.4;       /* Aumenta el espacio entre líneas para mejorar la lectura */
+}
+
+/* * INFORMACIÓN METADATA DEL GRUPO
+ * =============================
+ * Muestra información secundaria como número de miembros y fecha de creación.
+ */
+.grupo-info {
+    display: flex;                   /* Flexbox para poner los elementos en línea */
+    justify-content: space-between;  /* Separa los elementos a los extremos (izq y der) */
+    font-size: 0.9rem;              /* Tamaño de fuente más pequeño que el cuerpo */
+    color: #777;                    /* Color gris claro para restar importancia visual */
+    margin-bottom: 1rem;            /* Espacio debajo de la info antes de los botones */
+}
+
+/* * CONTENEDOR DE BOTONES DE ACCIÓN DEL GRUPO
+ * ========================================
+ * Agrupa los botones de acción para cada grupo (ver miembros, invitar, etc.)
+ */
+.grupo-acciones {
+    display: flex;          /* Flexbox para alinear botones horizontalmente */
+    gap: 0.5rem;           /* Pequeño espacio entre cada botón */
+}
+
+/* * FORMULARIO DE CREACIÓN DE GRUPO
+ * ===============================
+ * Estilo específico para el formulario de crear nuevo grupo.
+ */
+.form-crear-grupo {
+    background: white;       /* Fondo blanco */
+    padding: 1.5rem;         /* Espaciado interno */
+    border-radius: 8px;      /* Bordes redondeados */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Sombra muy sutil */
+    margin-bottom: 2rem;     /* Separa el formulario de la lista de grupos */
+}
+
+/* * SISTEMA DE MODALES (VENTANAS FLOTANTES)
+ * ======================================
+ * Estilos para modales que aparecen sobre el contenido principal.
+ * Se utilizan para invitaciones, listas de miembros, etc.
+ */
+
+/* FONDO DEL MODAL - Capa semitransparente que cubre toda la pantalla */
+.modal {
+    display: none;                      /* Oculto por defecto. JavaScript lo cambiará a 'flex' para mostrarlo */
+    position: fixed;                    /* Posición fija respecto a la ventana del navegador */
+    top: 0;                            /* Pegado al borde superior */
+    left: 0;                           /* Pegado al borde izquierdo */
+    width: 100%;                       /* Cubre todo el ancho */
+    height: 100%;                      /* Cubre todo el alto */
+    background-color: rgba(0,0,0,0.5); /* Fondo negro con 50% de transparencia (dimming) */
+    z-index: 2000;                     /* Asegura que esté por encima de cualquier otro elemento */
+    align-items: center;               /* Centra el contenido verticalmente */
+    justify-content: center;           /* Centra el contenido horizontalmente */
+}
+
+/* CONTENIDO PRINCIPAL DEL MODAL - La "ventana" que contiene la información */
+.modal-contenido {
+    background: white;                 /* Fondo blanco opaco */
+    border-radius: 8px;                /* Esquinas redondeadas */
+    width: 90%;                       /* Ocupa el 90% del ancho en móviles */
+    max-width: 500px;                 /* Pero nunca pasa de 500px en escritorio */
+    padding: 2rem;                    /* Espacio interno amplio */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Sombra fuerte para dar efecto de "flotar" */
+    position: relative;               /* Necesario para posicionar el botón de cerrar absoluto dentro de él */
+}
+
+/* * BOTÓN CERRAR MODAL (X)
+ * =====================
+ * Botón para cerrar el modal, posicionado en esquina superior derecha.
+ */
+.cerrar-modal {
+    position: absolute;    /* Posición absoluta respecto a .modal-contenido */
+    top: 1rem;            /* Separación desde arriba */
+    right: 1rem;          /* Separación desde la derecha */
+    background: none;     /* Sin fondo */
+    border: none;         /* Sin bordes */
+    font-size: 1.5rem;    /* Tamaño de fuente grande para la 'X' */
+    cursor: pointer;      /* Cursor de mano */
+    color: #777;          /* Color gris */
+}
+
+.cerrar-modal:hover {
+    color: #333;          /* Se oscurece al pasar el mouse */
+}
+
+/* * COMPONENTE DE CÓDIGO DE INVITACIÓN
+ * ==================================
+ * Área destacada para mostrar el código de invitación generado.
+ */
+.codigo-invitacion {
+    background: #f8f9fa;      /* Fondo gris muy claro para diferenciarlo */
+    border: 1px dashed #ccc;  /* Borde punteado para parecer un cupón o ticket */
+    padding: 1rem;            /* Padding interno */
+    border-radius: 4px;       /* Bordes levemente redondeados */
+    text-align: center;       /* Texto centrado */
+    font-family: monospace;   /* Fuente monoespaciada (tipo código) para facilitar la lectura */
+    font-size: 1.2rem;        /* Texto grande */
+    margin: 1rem 0;          /* Margen vertical */
+    letter-spacing: 1px;     /* Separación extra entre caracteres */
+}
+
+/* * CONTENEDOR DE BOTONES EN MODALES
+ * ===============================
+ * Para agrupar botones de acción en modales (copiar, cerrar, etc.)
+ */
+.botones-codigo {
+    display: flex;          /* Flexbox */
+    gap: 0.5rem;           /* Espacio entre botones */
+    justify-content: center; /* Centrados horizontalmente */
+}
+
+/* * LISTA DE MIEMBROS DEL GRUPO
+ * ===========================
+ * Estilos para la lista de miembros que se muestra en el modal.
+ */
+.lista-miembros {
+    margin-top: 1.5rem;    /* Separación superior respecto al título */
+}
+
+/* * ITEM INDIVIDUAL DE MIEMBRO EN LA LISTA
+ * =====================================
+ * Cada miembro se muestra como un item con avatar e información.
+ */
+.miembro-item {
+    display: flex;          /* Flexbox para alinear avatar (izq) e info (der) */
+    align-items: center;    /* Centrado vertical */
+    padding: 0.75rem 0;    /* Padding vertical */
+    border-bottom: 1px solid #eee; /* Línea divisoria entre miembros */
+}
+
+/* Elimina la línea divisoria del último elemento */
+.miembro-item:last-child {
+    border-bottom: none;    /* El último no lleva línea */
+}
+
+/* * AVATAR DEL MIEMBRO
+ * =================
+ * Imagen circular para la foto de perfil del miembro.
+ */
+.miembro-avatar {
+    width: 40px;           /* Ancho fijo */
+    height: 40px;          /* Alto fijo (cuadrado) */
+    border-radius: 50%;    /* Lo convierte en un círculo perfecto */
+    object-fit: cover;     /* Asegura que la imagen rellene el círculo sin deformarse */
+    margin-right: 1rem;    /* Separación a la derecha con el texto */
+}
+
+/* * INFORMACIÓN DEL MIEMBRO
+ * ======================
+ * Contenedor para nombre y rol del miembro.
+ */
+.miembro-info {
+    flex-grow: 1;          /* Ocupa todo el espacio disponible, empujando lo que siga a la derecha */
+}
+
+/* Nombre del miembro */
+.miembro-nombre {
+    font-weight: 500;      /* Fuente semi-negrita */
+    margin-bottom: 0.25rem; /* Pequeño margen inferior */
+}
+
+/* Rol del miembro (Administrador/Miembro) */
+.miembro-rol {
+    font-size: 0.85rem;    /* Texto más pequeño */
+    color: #777;           /* Color gris */
+}
+
+/* * INDICADOR ESPECIAL PARA ADMINISTRADORES
+ * ======================================
+ * Destaca visualmente a los miembros que son administradores.
+ */
+.miembro-admin {
+    color: #007bff;        /* Color azul corporativo para resaltar admins */
+}
+
+
+/* [MODIFICADO O AÑADIDO POR HUGO] 
+   Contenedor para botones de administración de miembros.
+   Se usa en la página de configuración para los botones de Ascender/Degradar/Expulsar.
+*/
+.miembro-acciones {
+    display: flex;
+    gap: 0.5rem;           /* Espacio entre botones */
+    flex-wrap: wrap;       /* Permite que los botones bajen de línea si no caben */
+    justify-content: flex-end; /* Alinea los botones a la derecha */
+}
+
+
+/* * DISEÑO RESPONSIVE ESPECÍFICO PARA GRUPOS
+ * =======================================
+ * Ajustes para la página de grupos en dispositivos móviles.
+ */
+
+/* Tablets y móviles (768px o menos) */
+@media (max-width: 768px) {
+    /* En móviles, cambia el header a columna */
+    .grupos-header {
+        flex-direction: column;  /* Apila los elementos verticalmente */
+        align-items: flex-start; /* Alinea a la izquierda */
+        gap: 1rem;              /* Espacio entre título y botón */
+    }
+    
+    /* En móviles, una sola columna para las tarjetas de grupo */
+    .lista-grupos {
+        grid-template-columns: 1fr; /* Fuerza una sola columna (1 fracción) */
+    }
+    
+    /* En móviles, botones de acción en columna */
+    .grupo-acciones {
+        flex-direction: column;  /* Botones uno debajo del otro */
+    }
+    
+    /* En móviles, botones de código en columna */
+    .botones-codigo {
+        flex-direction: column;  /* Botones uno debajo del otro */
+    }
+
+    /* [MODIFICADO O AÑADIDO POR HUGO]
+       Ajustes móviles para la lista de miembros 
+    */
+    .miembro-item {
+        flex-direction: column;     /* Apila avatar e info */
+        align-items: flex-start;    /* Alinea a la izquierda */
+        gap: 1rem;                  /* Separación */
+    }
+
+    /* [MODIFICADO O AÑADIDO POR HUGO]
+       Botones de admin ocupan todo el ancho en móvil 
+    */
+    .miembro-acciones {
+        width: 100%;                /* Ancho completo */
+        margin-left: 0 !important;
+        justify-content: stretch;   /* Estira el contenido */
+    }
+
+    .miembro-acciones button {
+        width: 100%;                /* Botones ocupan todo el ancho para ser pulsables */
+        margin-bottom: 0.5rem;      /* Separación entre botones */
+    }
+}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión | TimeUp</title>
+
+  <link rel="icon" href="../recursos/iconos/favicoTimeUp.ico" type="image/x-icon">
+  <link rel="stylesheet" href="../css/styles1.css">
+</head>
+<body>
+  <header class="encabezado">
+    <a href="../index.html">
+      <img src="../recursos/logoTimeUp.png" alt="Logo de TimeUp" class="logo-calendario" id="logo-timeup">
+    </a>
+    <button id="boton-tema" class="boton-tema" aria-label="Cambiar tema">🌙 Modo oscuro</button>
+  </header>
+
+  <main class="contenido-principal">
+    <section class="formulario-acceso">
+      <h2>Iniciar sesión</h2>
+      <p class="texto-intro">Accede a tu cuenta para ver y gestionar tus eventos.</p>
+
+      <form id="formularioInicio" class="formulario">
+        <label for="correo">Correo electrónico</label>
+        <input type="email" id="correo" name="correo" placeholder="tu@correo.com" required>
+
+        <label for="contrasena">Contraseña</label>
+        <input type="password" id="contrasena" name="contrasena" placeholder="••••••••" required>
+
+        <button type="submit" class="boton boton-principal">Entrar</button>
+      </form>
+
+      <p class="texto-pie">
+        ¿No tienes cuenta? <a href="./registro.html">Regístrate aquí</a>
+      </p>
+    </section>
+  </main>
+
+  <footer class="pie-pagina">
+    <p>© 2025 TimeUp. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="../js/tema.js"></script>
+  <script>
+    document.getElementById('formularioInicio').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const correo = document.getElementById('correo').value.trim();
+        const contrasena = document.getElementById('contrasena').value.trim();
+        const RUTA_API = 'http://localhost/TFG/proyecto-raiz/api/index.php';
+
+        try {
+            const response = await fetch(`${RUTA_API}?controlador=Autenticacion&accion=login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ correo, contrasena })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.exito) {
+                // Guardar sesión
+                localStorage.setItem('usuario', JSON.stringify(data.usuario));
+                alert('Inicio de sesión correcto ✅');
+
+                // --- REDIRECCIÓN INTELIGENTE ---
+                const pathActual = window.location.pathname;
+                let rutaDestino = '../usuario/usuario.html';
+
+                // Si estamos en /autenticacion/inicio-sesion.html, reemplazamos para ir a usuario
+                if (pathActual.includes('/autenticacion/')) {
+                    rutaDestino = pathActual.replace('/autenticacion/inicio-sesion.html', '/usuario/usuario.html');
+                }
+
+                console.log("Redirigiendo a:", rutaDestino); // Mira la consola si falla
+                window.location.href = rutaDestino;
+
+            } else {
+                alert(data.error || 'Credenciales incorrectas ❌');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error de conexión.');
+        }
+    });
+  </script>
+</body>
+</html>

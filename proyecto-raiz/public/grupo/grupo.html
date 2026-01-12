@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Grupos - TimeUp</title>
+
+    <!-- MODO OSCURO GLOBAL -->
+    <link rel="stylesheet" href="../css/tema.css">
+
+    <link rel="stylesheet" href="../css/style2.css">
+    <link rel="stylesheet" href="../css/usuario.css">
+    <link rel="stylesheet" href="../css/grupos.css">
+
+    <style>
+        .acciones-header {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="grupos-container">
+            
+            <header class="grupos-header">
+                <h1>Mis Grupos</h1>
+                
+                <div class="acciones-header">
+                    <button id="btn-unirse-grupo" class="btn-secondary">Unirse a Grupo</button>
+                    <button id="btn-crear-grupo" class="btn-primary">Crear Nuevo Grupo</button>
+                </div>
+            </header>
+            
+            <section id="form-crear-grupo" class="form-crear-grupo" style="display: none;">
+                <h2>Crear Nuevo Grupo</h2>
+                
+                <form id="crear-grupo-form">
+                    <div class="form-group">
+                        <label for="nombre-grupo">Nombre del grupo:</label>
+                        <input type="text" id="nombre-grupo" name="nombre-grupo" required maxlength="50">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="descripcion-grupo">Descripción:</label>
+                        <textarea id="descripcion-grupo" name="descripcion-grupo" rows="3" maxlength="200"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn-primary">Crear Grupo</button>
+                        <button type="button" id="btn-cancelar-crear" class="btn-secondary">Cancelar</button>
+                    </div>
+                </form>
+            </section>
+
+            <section id="form-unirse-grupo" class="form-crear-grupo" style="display: none;">
+                <h2>Unirse a un Grupo</h2>
+                <p>Introduce el código de invitación que te han proporcionado.</p>
+                <form id="unirse-grupo-form">
+                    <div class="form-group">
+                        <label for="token-invitacion">Código de invitación:</label>
+                        <input type="text" id="token-invitacion" name="token_invitacion" required placeholder="Ej: A4F9C8B2E1" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn-primary">Unirse</button>
+                        <button type="button" id="btn-cancelar-unirse" class="btn-secondary">Cancelar</button>
+                    </div>
+                </form>
+            </section>
+            
+            <div id="lista-grupos" class="lista-grupos">
+            </div>
+            
+            <div id="sin-grupos" class="profile-section" style="display: none; text-align: center;">
+                <h2>No tienes grupos aún</h2>
+                <p>Crea tu primer grupo para empezar a colaborar con otros usuarios.</p>
+                <button id="btn-crear-primer-grupo" class="btn-primary">Crear mi primer grupo</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal-invitacion" class="modal">
+        <div class="modal-contenido">
+            <button class="cerrar-modal">&times;</button> 
+            <h2>Invitar miembros al grupo</h2>
+            <p>Comparte este código con las personas que quieras invitar al grupo:</p>
+            
+            <div id="codigo-invitacion" class="codigo-invitacion">Cargando...</div>
+            
+            <div class="botones-codigo">
+                <button id="btn-copiar-codigo" class="btn-primary">Copiar código</button>
+                <button id="btn-cerrar-invitacion" class="btn-secondary">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal-miembros" class="modal">
+        <div class="modal-contenido">
+            <button class="cerrar-modal">&times;</button>
+            
+            <h2 id="titulo-miembros">Miembros del grupo</h2>
+            
+            <div id="lista-miembros" class="lista-miembros">
+            </div>
+        </div>
+    </div>
+    
+    <script src="../js/grupo.js"></script>
+</body>
+</html>
