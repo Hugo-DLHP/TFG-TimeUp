@@ -6,15 +6,35 @@
     padding: 1rem;
 }
 
+/* ===== TOOLBAR ===== */
 .toolbar-tareas {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
+    gap: 12px;
     margin-bottom: 2rem;
-    border-bottom: 2px solid #eee;
     padding-bottom: 1rem;
 }
 
+/* Título centrado */
+.toolbar-tareas h2 {
+    text-align: center;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+/* Líneas decorativas centradas */
+.toolbar-tareas h2::after {
+    content: "";
+    display: block;
+    width: 120px;
+    height: 3px;
+    margin: 8px auto 0 auto;
+    background: linear-gradient(to right, #ffffff, #4da3ff);
+    border-radius: 2px;
+}
+
+/* Botón debajo del título */
 .boton-crear-pagina {
     background-color: #007bff;
     color: white;
@@ -24,9 +44,14 @@
     font-weight: bold;
     transition: background 0.3s;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 10px;
 }
-.boton-crear-pagina:hover { background-color: #0056b3; }
 
+.boton-crear-pagina:hover {
+    background-color: #0056b3;
+}
+
+/* ===== LISTA ===== */
 .lista-tareas {
     list-style: none;
     padding: 0;
@@ -47,7 +72,9 @@
     transition: transform 0.2s;
 }
 
-.item-tarea:hover { transform: translateY(-2px); }
+.item-tarea:hover {
+    transform: translateY(-2px);
+}
 
 /* Colores de estado */
 .item-tarea.estado-pendiente { border-left-color: #ffc107; }
@@ -55,7 +82,9 @@
 .item-tarea.estado-completada { border-left-color: #28a745; }
 
 /* Cursor mano solo si es admin */
-.item-tarea.es-admin { cursor: pointer; }
+.item-tarea.es-admin {
+    cursor: pointer;
+}
 
 /* --- CABECERA --- */
 .tarea-header {
@@ -109,9 +138,19 @@
     min-width: 110px;
     text-align: center;
 }
-.btn-estado.pendiente { background-color: #ffc107; color: #333; }
-.btn-estado.en_proceso { background-color: #17a2b8; }
-.btn-estado.completada { background-color: #28a745; }
+
+.btn-estado.pendiente {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.btn-estado.en_proceso {
+    background-color: #17a2b8;
+}
+
+.btn-estado.completada {
+    background-color: #28a745;
+}
 
 /* Flecha desplegable */
 .flecha-toggle {
@@ -120,7 +159,11 @@
     transition: transform 0.3s ease;
     margin-left: 5px;
 }
-.item-tarea.abierto .flecha-toggle { transform: rotate(90deg); color: #333; }
+
+.item-tarea.abierto .flecha-toggle {
+    transform: rotate(90deg);
+    color: #333;
+}
 
 /* --- DETALLE DESPLEGABLE --- */
 .tarea-detalle {
@@ -190,7 +233,11 @@
     cursor: pointer;
     font-size: 0.9rem;
 }
-.btn-eliminar-texto:hover { background: #dc3545; color: white; }
+
+.btn-eliminar-texto:hover {
+    background: #dc3545;
+    color: white;
+}
 
 .btn-editar-texto {
     background: none;
@@ -202,13 +249,19 @@
     font-size: 0.9rem;
     margin-right: 10px;
 }
-.btn-editar-texto:hover { background: #007bff; color: white; }
 
-/* --- ESTILOS MODAL --- */
+.btn-editar-texto:hover {
+    background: #007bff;
+    color: white;
+}
+
+/* --- MODAL --- */
 .modal-overlay {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: rgba(0,0,0,0.5);
     display: flex;
     justify-content: center;
@@ -234,7 +287,9 @@
     padding-bottom: 10px;
 }
 
-.modal-header h3 { margin: 0; }
+.modal-header h3 {
+    margin: 0;
+}
 
 .btn-cerrar-modal {
     background: none;
