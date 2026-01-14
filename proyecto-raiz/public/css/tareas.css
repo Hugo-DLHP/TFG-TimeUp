@@ -1,0 +1,323 @@
+/* UBICACIÓN: public/css/tareas.css */
+
+.panel-tareas {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* ===== TOOLBAR ===== */
+.toolbar-tareas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+}
+
+/* Título centrado */
+.toolbar-tareas h2 {
+    text-align: center;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+/* Líneas decorativas centradas */
+.toolbar-tareas h2::after {
+    content: "";
+    display: block;
+    width: 120px;
+    height: 3px;
+    margin: 8px auto 0 auto;
+    background: linear-gradient(to right, #ffffff, #4da3ff);
+    border-radius: 2px;
+}
+
+/* Botón debajo del título */
+.boton-crear-pagina {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 10px;
+}
+
+.boton-crear-pagina:hover {
+    background-color: #0056b3;
+}
+
+/* ===== LISTA ===== */
+.lista-tareas {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* --- TARJETA PRINCIPAL --- */
+.item-tarea {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; 
+    border-left: 5px solid #ccc; 
+    transition: transform 0.2s;
+}
+
+.item-tarea:hover {
+    transform: translateY(-2px);
+}
+
+/* Colores de estado */
+.item-tarea.estado-pendiente { border-left-color: #ffc107; }
+.item-tarea.estado-en_proceso { border-left-color: #17a2b8; }
+.item-tarea.estado-completada { border-left-color: #28a745; }
+
+/* Cursor mano solo si es admin */
+.item-tarea.es-admin {
+    cursor: pointer;
+}
+
+/* --- CABECERA --- */
+.tarea-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 15px 20px;
+    gap: 15px;
+}
+
+.tarea-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.tarea-descripcion {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.tarea-grupo {
+    font-size: 0.85rem;
+    color: #888;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.tarea-acciones {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+/* Botón de estado */
+.btn-estado {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    color: white;
+    min-width: 110px;
+    text-align: center;
+}
+
+.btn-estado.pendiente {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.btn-estado.en_proceso {
+    background-color: #17a2b8;
+}
+
+.btn-estado.completada {
+    background-color: #28a745;
+}
+
+/* Flecha desplegable */
+.flecha-toggle {
+    font-size: 0.8rem;
+    color: #999;
+    transition: transform 0.3s ease;
+    margin-left: 5px;
+}
+
+.item-tarea.abierto .flecha-toggle {
+    transform: rotate(90deg);
+    color: #333;
+}
+
+/* --- DETALLE DESPLEGABLE --- */
+.tarea-detalle {
+    max-height: 0; 
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background-color: #f8f9fa;
+    border-top: 1px solid transparent;
+}
+
+.item-tarea.abierto .tarea-detalle {
+    max-height: 500px;
+    border-top-color: #eee;
+}
+
+.detalle-contenido {
+    padding: 15px 20px;
+}
+
+.titulo-asignados {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.lista-asignados {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.chip-usuario {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 1px solid #ddd;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+.chip-usuario img {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.acciones-extra {
+    text-align: right;
+    border-top: 1px solid #e9ecef;
+    padding-top: 10px;
+}
+
+/* Botones Acción Texto */
+.btn-eliminar-texto {
+    background: none;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    padding: 5px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-eliminar-texto:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-editar-texto {
+    background: none;
+    border: 1px solid #007bff;
+    color: #007bff;
+    padding: 5px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-right: 10px;
+}
+
+.btn-editar-texto:hover {
+    background: #007bff;
+    color: white;
+}
+
+/* --- MODAL --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-contenido {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.modal-header h3 {
+    margin: 0;
+}
+
+.btn-cerrar-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.input-full {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.lista-checkboxes {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    padding: 10px;
+    margin-top: 5px;
+    background: #fafafa;
+}
+
+.modal-footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}

@@ -1,0 +1,242 @@
+/* ===========================================================================
+ * ESTILOS ESPECÍFICOS PARA GESTIÓN DE GRUPOS - TimeUp v1.0
+ * ===========================================================================
+ */
+
+.grupos-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* =========================
+ * HEADER DE GRUPOS (CORREGIDO)
+ * ========================= */
+.grupos-header {
+    display: flex;
+    flex-direction: column;          /* ⬅️ título arriba, botones abajo */
+    align-items: center;             /* ⬅️ centrado horizontal */
+    text-align: center;              /* ⬅️ texto centrado */
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #ddd;
+    gap: 1rem;
+}
+
+/* Título */
+.grupos-header h1 {
+    margin: 0;
+}
+
+/* Botones debajo del título */
+.acciones-header {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;                 /* ⬅️ por si no caben en móvil */
+}
+
+/* =========================
+ * GRID DE GRUPOS
+ * ========================= */
+.lista-grupos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* =========================
+ * TARJETA DE GRUPO
+ * ========================= */
+.grupo-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.grupo-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.grupo-card h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.grupo-descripcion {
+    color: #666;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.grupo-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #777;
+    margin-bottom: 1rem;
+}
+
+.grupo-acciones {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* =========================
+ * FORMULARIO CREAR GRUPO
+ * ========================= */
+.form-crear-grupo {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+/* =========================
+ * MODALES
+ * ========================= */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-contenido {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.cerrar-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #777;
+}
+
+.cerrar-modal:hover {
+    color: #333;
+}
+
+.codigo-invitacion {
+    background: #f8f9fa;
+    border: 1px dashed #ccc;
+    padding: 1rem;
+    border-radius: 4px;
+    text-align: center;
+    font-family: monospace;
+    font-size: 1.2rem;
+    margin: 1rem 0;
+    letter-spacing: 1px;
+}
+
+.botones-codigo {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+/* =========================
+ * MIEMBROS
+ * ========================= */
+.lista-miembros {
+    margin-top: 1.5rem;
+}
+
+.miembro-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.miembro-item:last-child {
+    border-bottom: none;
+}
+
+.miembro-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 1rem;
+}
+
+.miembro-info {
+    flex-grow: 1;
+}
+
+.miembro-nombre {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.miembro-rol {
+    font-size: 0.85rem;
+    color: #777;
+}
+
+.miembro-admin {
+    color: #007bff;
+}
+
+.miembro-acciones {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+/* =========================
+ * RESPONSIVE
+ * ========================= */
+@media (max-width: 768px) {
+    .lista-grupos {
+        grid-template-columns: 1fr;
+    }
+
+    .grupo-acciones {
+        flex-direction: column;
+    }
+
+    .botones-codigo {
+        flex-direction: column;
+    }
+
+    .miembro-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .miembro-acciones {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .miembro-acciones button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
